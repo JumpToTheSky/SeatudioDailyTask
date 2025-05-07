@@ -1,5 +1,5 @@
 class CauThu {
-    constructor(ten, vaiTro) {
+    constructor(ten, vaiTro, capBaiTrung, khongHop) {
         this.ten = ten;
         this.vaiTro = vaiTro; 
     }
