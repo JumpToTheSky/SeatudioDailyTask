@@ -186,6 +186,28 @@ function xoaToanBoDuLieu() {
     });
 }
 
+function xoaCauThu() {
+    hienThiDanhSachCauThu();
+
+    rl.question("Nhập số thứ tự của cầu thủ muốn xoá (hoặc nhập 'EXIT' để thoát): ", (index) => {
+        if (index.toLowerCase() === 'exit') {
+            menu();
+            return;
+        }
+        const cauThu = danhSach[index - 1];
+        if (!cauThu) {
+            console.log("Số thứ tự không hợp lệ.");
+            menu();
+            return;
+        }
+
+        danhSach.splice(index - 1, 1); // Xoá cầu thủ khỏi danh sách
+        console.log(`Đã xoá cầu thủ ${cauThu.ten} khỏi danh sách.`);
+        saveDanhSachToFile(danhSach); // Lưu danh sách sau khi cập nhật
+        menu();
+    });
+}
+
 function LapDoi3Nguoi() {
     const atChubai = danhSach.find(cauThu => cauThu.vaiTro === 'atchubai');
     if (!atChubai) {
@@ -276,6 +298,7 @@ function menu() {
     console.log("7. Lập đội 3 người thoả mãn");
     console.log("8. Bật/tắt điều kiện cặp bài trùng");
     console.log("9. Bật/tắt điều kiện không hợp");
+    console.log("10. Xoá một cầu thủ");
     console.log("0. Thoát");
 
     rl.question("Chọn một tùy chọn: ", (option) => {
@@ -307,6 +330,9 @@ function menu() {
                 break;
             case "9":
                 thayDoiDieuKienKhongHop();
+                break;
+            case "10":
+                xoaCauThu();
                 break;
             case "0":
                 console.log("Thoát chương trình.");

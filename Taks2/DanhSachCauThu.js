@@ -4,7 +4,8 @@ const path = require('path');
 const filePath = path.join(__dirname, 'DanhSachCauThu.json');
 
 class CauThu {
-    constructor(ten, vaiTro, capBaiTrung = null, khongHop = null) {
+    constructor(id, ten, vaiTro, capBaiTrung = null, khongHop = null) {
+        this.id = id;
         this.ten = ten;
         this.vaiTro = vaiTro; 
         this.capBaiTrung = capBaiTrung;
@@ -12,7 +13,7 @@ class CauThu {
     }
 
     hienThiThongTin() {
-        console.log(`Tên: ${this.ten}, Vị trí: ${this.vaiTro}, Không hợp: ${this.khongHop || 'Không có'}, Cặp bài trùng: ${this.capBaiTrung || 'Không có'}`);
+        console.log(`ID: ${this.id}, Tên: ${this.ten}, Vị trí: ${this.vaiTro}, Không hợp: ${this.khongHop || 'Không có'}, Cặp bài trùng: ${this.capBaiTrung || 'Không có'}`);
     }
 }
 
@@ -41,10 +42,10 @@ function taoDanhSachCauThu() {
             }
         }
 
-        danhSach.push(new CauThu(`Cauthu${i}`, role));
+        danhSach.push(new CauThu(i, `Cauthu${i}`, role));
     }
 
-    danhSach.push(new CauThu('Cauthu40', 'atchubai'));
+    danhSach.push(new CauThu(40, 'Cauthu40', 'atchubai'));
 
     saveDanhSachToFile(danhSach);
     return danhSach;
@@ -65,7 +66,7 @@ function loadDanhSachFromFile() {
         const data = fs.readFileSync(filePath, 'utf-8');
         if (data.trim() && data.trim() !== '[]') { // Kiểm tra nếu file không rỗng và không chỉ chứa []
             const danhSach = JSON.parse(data);
-            return danhSach.map(cauThu => new CauThu(cauThu.ten, cauThu.vaiTro, cauThu.capBaiTrung, cauThu.khongHop));
+            return danhSach.map(cauThu => new CauThu(cauThu.id, cauThu.ten, cauThu.vaiTro, cauThu.capBaiTrung, cauThu.khongHop));
         }
     }
     return taoDanhSachCauThu(); 
