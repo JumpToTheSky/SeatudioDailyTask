@@ -18,27 +18,33 @@ class CauThu {
 
 function taoDanhSachCauThu() {
     const danhSach = [];
-    const vaiTro = ['nongcot', 'dubi'];
+    const vaiTro = ['nongcot', 'dubi', 'binhthuong'];
     let countNongcot = 0;
     let countDubi = 0;
+    let countBinhthuong = 0;
 
-    for (let i = 1; i <= 10; i++) {
+    for (let i = 1; i <= 39; i++) {
         let role;
-        if (countNongcot < 5 && countDubi < 5) {
-            role = vaiTro[Math.floor(Math.random() * 2)];
-        } else if (countNongcot < 5) {
-            role = 'nongcot';
-        } else {
-            role = 'dubi';
+        while (true) {
+            role = vaiTro[Math.floor(Math.random() * 3)];
+            if (role === 'nongcot' && countNongcot < 5) {
+                countNongcot++;
+                break;
+            }
+            if (role === 'dubi' && countDubi < 5) {
+                countDubi++;
+                break;
+            }
+            if (role === 'binhthuong' && countBinhthuong < 29) {
+                countBinhthuong++;
+                break;
+            }
         }
-
-        if (role === 'nongcot') countNongcot++;
-        if (role === 'dubi') countDubi++;
 
         danhSach.push(new CauThu(`Cauthu${i}`, role));
     }
 
-    danhSach.push(new CauThu('Cauthu11', 'atchubai'));
+    danhSach.push(new CauThu('Cauthu40', 'atchubai'));
 
     saveDanhSachToFile(danhSach);
     return danhSach;
@@ -57,7 +63,7 @@ function saveDanhSachToFile(danhSach) {
 function loadDanhSachFromFile() {
     if (fs.existsSync(filePath)) {
         const data = fs.readFileSync(filePath, 'utf-8');
-        if (data.trim()) { // Kiểm tra nếu file không rỗng
+        if (data.trim() && data.trim() !== '[]') { // Kiểm tra nếu file không rỗng và không chỉ chứa []
             const danhSach = JSON.parse(data);
             return danhSach.map(cauThu => new CauThu(cauThu.ten, cauThu.vaiTro, cauThu.capBaiTrung, cauThu.khongHop));
         }
