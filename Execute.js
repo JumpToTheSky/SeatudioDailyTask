@@ -12,6 +12,7 @@ const { Student, nhapThongTin } = require('./StoreStudent');
 const { timKiemHocSinhTheoTen } = require('./SearchStudentByName');
 const { hienThiThongKe } = require('./DisplayStatics');
 const { nhapSoLuongHocSinhMoi } = require('./AddStudent');
+const { backupDanhSachHocSinh, hienThiBackupDanhSachHocSinh } = require('./BackupStudentList');
 
 function loadDanhSachHocSinh() {
     try {
@@ -31,11 +32,17 @@ function hienThiMenu() {
     console.log('3. Tìm kiếm học sinh theo tên');
     console.log('4. Hiển thị thống kê');
     console.log('5. Thêm học sinh mới');
-    console.log('6. Thoát');
-    rl.question('Chọn chức năng (1-6): ', (choice) => {
+    console.log('6. Tạo bản sao lưu danh sách học sinh');
+    console.log('7. Hiển thị danh sách từ bản sao lưu');
+    console.log('8. Thoát');
+    rl.question('Chọn chức năng (1-8): ', (choice) => {
         switch (choice) {
             case '1':
-                rl.question('Nhập số lượng học sinh: ', (so) => {
+                rl.question('Nhập số lượng học sinh (hoặc nhập "EXIT" để quay lại): ', (so) => {
+                    if (so.trim().toUpperCase() === 'EXIT') {
+                        hienThiMenu();
+                        return;
+                    }
                     const soLuong = parseInt(so);
                     if (isNaN(soLuong) || soLuong <= 0) {
                         console.log('Số lượng không hợp lệ.');
@@ -50,7 +57,11 @@ function hienThiMenu() {
                 hienThiMenu();
                 break;
             case '3':
-                rl.question('Nhập tên học sinh cần tìm: ', (name) => {
+                rl.question('Nhập tên học sinh cần tìm (hoặc nhập "EXIT" để quay lại): ', (name) => {
+                    if (name.trim().toUpperCase() === 'EXIT') {
+                        hienThiMenu();
+                        return;
+                    }
                     const ketQua = timKiemHocSinhTheoTen(name);
                     if (ketQua.length > 0) {
                         console.log('\nKết quả tìm kiếm:');
@@ -66,10 +77,33 @@ function hienThiMenu() {
                 hienThiMenu();
                 break;
             case '5':
-                nhapSoLuongHocSinhMoi();
-                hienThiMenu();
+                rl.question('Nhập số lượng học sinh mới (hoặc nhập "EXIT" để quay lại): ', (so) => {
+                    if (so.trim().toUpperCase() === 'EXIT') {
+                        hienThiMenu();
+                        return;
+                    }
+                    const soLuong = parseInt(so);
+                    if (isNaN(soLuong) || soLuong <= 0) {
+                        console.log('Số lượng không hợp lệ.');
+                        hienThiMenu();
+                    } else {
+                        nhapSoLuongHocSinhMoi(soLuong, hienThiMenu);
+                    }
+                });
                 break;
             case '6':
+                rl.question('Bạn có chắc muốn sao lưu danh sách học sinh? (y/n): ', (confirm) => {
+                    if (confirm.trim().toLowerCase() === 'y') {
+                        backupDanhSachHocSinh();
+                    }
+                    hienThiMenu();
+                });
+                break;
+            case '7':
+                hienThiBackupDanhSachHocSinh();
+                hienThiMenu();
+                break;
+            case '8':
                 rl.close();
                 break;
             default:

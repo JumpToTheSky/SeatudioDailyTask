@@ -16,7 +16,7 @@ class Student {
     }
   
     hienThiThongTin() {
-        console.log(`Họ tên: ${this.name}, Tuổi: ${this.age}, Mã học sinh: ${this.id}, Lớp: ${this.grade}`);
+        console.log(`Họ tên: ${this.name}, Tuổi: ${this.age}, Mã học sinh: ${this.id}, Điểm: ${this.grade}`);
     }
 }
 
@@ -26,7 +26,7 @@ function nhapThongTin(index, soLuong, callback) {
     rl.question('Họ và tên: ', (name) => {
         rl.question('Tuổi: ', (age) => {
             rl.question('Mã học sinh: ', (id) => {
-                rl.question('Lớp: ', (grade) => {
+                rl.question('Điểm: ', (grade) => {
                     const student = new Student(id, name, parseInt(age), grade);
                     danhSachHocSinh.push(student);
                     

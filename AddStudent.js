@@ -12,7 +12,7 @@ function themHocSinhMoi(index, soLuong, callback) {
     rl.question('Họ và tên: ', (name) => {
         rl.question('Tuổi: ', (age) => {
             rl.question('Mã học sinh: ', (id) => {
-                rl.question('Lớp: ', (grade) => {
+                rl.question('Điểm: ', (grade) => {
                     const student = new Student(id, name, parseInt(age), grade);
                     danhSachHocSinh.push(student);
 
