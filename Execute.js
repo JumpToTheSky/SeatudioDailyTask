@@ -1,4 +1,5 @@
 const readline = require('readline');
+const fs = require('fs');
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -8,9 +9,20 @@ const rl = readline.createInterface({
 const { hienThiDanhSachHocSinh } = require('./DisplayStudent');
 const { danhSachHocSinh } = require('./StudentList');
 const { Student, nhapThongTin } = require('./StoreStudent');
-const { timKiemHocSinhTheoTen } = require('./SearchStudent');
+const { timKiemHocSinhTheoTen } = require('./SearchStudentByName');
 const { hienThiThongKe } = require('./DisplayStatics');
 const { nhapSoLuongHocSinhMoi } = require('./AddStudent');
+
+function loadDanhSachHocSinh() {
+    try {
+        const data = fs.readFileSync('./StudentList.json', 'utf8');
+        const students = JSON.parse(data);
+        students.forEach(student => danhSachHocSinh.push(student));
+        console.log('Dữ liệu danh sách học sinh đã được tải.');
+    } catch (err) {
+        console.log('Không thể tải dữ liệu danh sách học sinh. Tạo danh sách mới.');
+    }
+}
 
 function hienThiMenu() {
     console.log('\n--- Menu ---');
@@ -67,6 +79,7 @@ function hienThiMenu() {
     });
 }
 
+loadDanhSachHocSinh();
 hienThiMenu();
 
 

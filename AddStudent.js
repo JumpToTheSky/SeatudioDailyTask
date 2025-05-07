@@ -1,5 +1,5 @@
 const readline = require('readline');
-const { danhSachHocSinh } = require('./StudentList');
+const { danhSachHocSinh, saveDanhSachHocSinh } = require('./StudentList');
 const { Student } = require('./StoreStudent');
 
 const rl = readline.createInterface({
@@ -20,6 +20,7 @@ function themHocSinhMoi(index, soLuong, callback) {
                     if (index < soLuong) {
                         themHocSinhMoi(index, soLuong, callback);
                     } else {
+                        saveDanhSachHocSinh(); // Save after adding new students
                         if (callback) callback();
                     }
                 });

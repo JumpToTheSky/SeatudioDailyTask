@@ -1,6 +1,6 @@
 const readline = require('readline');
 const { hienThiDanhSachHocSinh } = require('./DisplayStudent');
-const { danhSachHocSinh } = require('./StudentList');
+const { danhSachHocSinh, saveDanhSachHocSinh } = require('./StudentList');
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -34,6 +34,7 @@ function nhapThongTin(index, soLuong, callback) {
                     if (index < soLuong) {
                         nhapThongTin(index, soLuong, callback);
                     } else {
+                        saveDanhSachHocSinh(); // Save after adding students
                         if (callback) callback();
                     }
                 });
