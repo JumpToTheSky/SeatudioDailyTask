@@ -1,11 +1,5 @@
 const readline = require('readline');
-const { hienThiDanhSachHocSinh } = require('./DisplayStudent');
-const { danhSachHocSinh, saveDanhSachHocSinh } = require('./StudentList');
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
 
 class Student {
     constructor(id, name, age, grade) {
@@ -21,28 +15,8 @@ class Student {
 }
 
 
-function nhapThongTin(index, soLuong, callback) {
-    console.log(`\n--- Nhập thông tin học sinh thứ ${index + 1} ---`);
-    rl.question('Họ và tên: ', (name) => {
-        rl.question('Tuổi: ', (age) => {
-            rl.question('Mã học sinh: ', (id) => {
-                rl.question('Điểm: ', (grade) => {
-                    const student = new Student(id, name, parseInt(age), grade);
-                    danhSachHocSinh.push(student);
-                    
-                    index++;
-                    if (index < soLuong) {
-                        nhapThongTin(index, soLuong, callback);
-                    } else {
-                        saveDanhSachHocSinh(); // Save after adding students
-                        if (callback) callback();
-                    }
-                });
-            });
-        });
-    });
-}
 
-module.exports = { Student, nhapThongTin };
+
+module.exports = { Student };
 
 

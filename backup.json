@@ -34,29 +34,5 @@
     "name": "1",
     "age": 1,
     "grade": ""
-  },
-  {
-    "id": "22",
-    "name": "Pham Nguyen",
-    "age": 22,
-    "grade": "10"
-  },
-  {
-    "id": "24",
-    "name": "Khoa",
-    "age": 24,
-    "grade": "10"
-  },
-  {
-    "id": "23",
-    "name": "Pham Nguyen",
-    "age": 23,
-    "grade": "10"
-  },
-  {
-    "id": "55",
-    "name": "Nguyen Pham",
-    "age": 23,
-    "grade": "4"
   }
 ]

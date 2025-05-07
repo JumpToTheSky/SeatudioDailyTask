@@ -7,18 +7,77 @@ const rl = readline.createInterface({
 });
 
 const { hienThiDanhSachHocSinh } = require('./DisplayStudent');
-const { danhSachHocSinh } = require('./StudentList');
-const { Student, nhapThongTin } = require('./StoreStudent');
+const { danhSachHocSinh, saveDanhSachHocSinh, clearDanhSachHocSinh } = require('./StudentList');
+const { Student } = require('./StoreStudent');
 const { timKiemHocSinhTheoTen } = require('./SearchStudentByName');
 const { hienThiThongKe } = require('./DisplayStatics');
-const { nhapSoLuongHocSinhMoi } = require('./AddStudent');
 const { backupDanhSachHocSinh, hienThiBackupDanhSachHocSinh } = require('./BackupStudentList');
+
+function nhapThongTin(index, soLuong, callback) {
+    console.log(`\n--- Nhập thông tin học sinh thứ ${index + 1} ---`);
+    rl.question('Họ và tên: ', (name) => {
+        rl.question('Tuổi: ', (age) => {
+            rl.question('Mã học sinh: ', (id) => {
+                rl.question('Điểm: ', (grade) => {
+                    const student = new Student(id, name, parseInt(age), grade);
+                    danhSachHocSinh.push(student);
+                    
+                    index++;
+                    if (index < soLuong) {
+                        nhapThongTin(index, soLuong, callback);
+                    } else {
+                        saveDanhSachHocSinh(); // Save after adding students
+                        if (callback) callback();
+                    }
+                });
+            });
+        });
+    });
+}
+
+function themHocSinhMoi(index, soLuong, callback) {
+    console.log(`\n--- Nhập thông tin học sinh mới thứ ${index + 1} ---`);
+    rl.question('Họ và tên: ', (name) => {
+        rl.question('Tuổi: ', (age) => {
+            rl.question('Mã học sinh: ', (id) => {
+                rl.question('Điểm: ', (grade) => {
+                    const student = new Student(id, name, parseInt(age), grade);
+                    danhSachHocSinh.push(student);
+
+                    index++;
+                    if (index < soLuong) {
+                        themHocSinhMoi(index, soLuong, callback);
+                    } else {
+                        saveDanhSachHocSinh(); // Save after adding new students
+                        if (callback) callback();
+                    }
+                });
+            });
+        });
+    });
+}
+
+function nhapSoLuongHocSinhMoi(callback) {
+    rl.question('Nhập số lượng học sinh mới cần thêm: ', (so) => {
+        const soLuong = parseInt(so);
+        if (isNaN(soLuong) || soLuong <= 0) {
+            console.log('Số lượng không hợp lệ.');
+            if (callback) callback();
+        } else {
+            themHocSinhMoi(0, soLuong, callback);
+        }
+    });
+}
+
 
 function loadDanhSachHocSinh() {
     try {
         const data = fs.readFileSync('./StudentList.json', 'utf8');
         const students = JSON.parse(data);
-        students.forEach(student => danhSachHocSinh.push(student));
+        students.forEach(studentData => {
+            const student = new Student(studentData.id, studentData.name, studentData.age, studentData.grade);
+            danhSachHocSinh.push(student);
+        });
         console.log('Dữ liệu danh sách học sinh đã được tải.');
     } catch (err) {
         console.log('Không thể tải dữ liệu danh sách học sinh. Tạo danh sách mới.');
@@ -35,7 +94,8 @@ function hienThiMenu() {
     console.log('6. Tạo bản sao lưu danh sách học sinh');
     console.log('7. Hiển thị danh sách từ bản sao lưu');
     console.log('8. Thoát');
-    rl.question('Chọn chức năng (1-8): ', (choice) => {
+    console.log('9. Xoá sạch danh sách học sinh');
+    rl.question('Chọn chức năng (1-9): ', (choice) => {
         switch (choice) {
             case '1':
                 rl.question('Nhập số lượng học sinh (hoặc nhập "EXIT" để quay lại): ', (so) => {
@@ -53,7 +113,7 @@ function hienThiMenu() {
                 });
                 break;
             case '2':
-                hienThiDanhSachHocSinh(danhSachHocSinh);
+                hienThiDanhSachHocSinh();
                 hienThiMenu();
                 break;
             case '3':
@@ -105,6 +165,14 @@ function hienThiMenu() {
                 break;
             case '8':
                 rl.close();
+                break;
+            case '9':
+                rl.question('Bạn có chắc muốn xoá sạch danh sách học sinh? (y/n): ', (confirm) => {
+                    if (confirm.trim().toLowerCase() === 'y') {
+                        clearDanhSachHocSinh();
+                    }
+                    hienThiMenu();
+                });
                 break;
             default:
                 console.log('Lựa chọn không hợp lệ.');
