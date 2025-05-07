@@ -1,1 +1,282 @@
-[]
+[
+  {
+    "id": 1,
+    "ten": "Cauthu1",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 2,
+    "ten": "Cauthu2",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 3,
+    "ten": "Cauthu3",
+    "vaiTro": "nongcot",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 4,
+    "ten": "Cauthu4",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 5,
+    "ten": "Cauthu5",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 6,
+    "ten": "Cauthu6",
+    "vaiTro": "atchubai",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 7,
+    "ten": "Cauthu7",
+    "vaiTro": "nongcot",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 8,
+    "ten": "Cauthu8",
+    "vaiTro": "nongcot",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 9,
+    "ten": "Cauthu9",
+    "vaiTro": "nongcot",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 10,
+    "ten": "Cauthu10",
+    "vaiTro": "nongcot",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 11,
+    "ten": "Cauthu11",
+    "vaiTro": "dubi",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 12,
+    "ten": "Cauthu12",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 13,
+    "ten": "Cauthu13",
+    "vaiTro": "dubi",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 14,
+    "ten": "Cauthu14",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 15,
+    "ten": "Cauthu15",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 16,
+    "ten": "Cauthu16",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 17,
+    "ten": "Cauthu17",
+    "vaiTro": "dubi",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 18,
+    "ten": "Cauthu18",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 19,
+    "ten": "Cauthu19",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 20,
+    "ten": "Cauthu20",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 21,
+    "ten": "Cauthu21",
+    "vaiTro": "dubi",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 22,
+    "ten": "Cauthu22",
+    "vaiTro": "dubi",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 23,
+    "ten": "Cauthu23",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 24,
+    "ten": "Cauthu24",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 25,
+    "ten": "Cauthu25",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 26,
+    "ten": "Cauthu26",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 27,
+    "ten": "Cauthu27",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 28,
+    "ten": "Cauthu28",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 29,
+    "ten": "Cauthu29",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 30,
+    "ten": "Cauthu30",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 31,
+    "ten": "Cauthu31",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 32,
+    "ten": "Cauthu32",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 33,
+    "ten": "Cauthu33",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 34,
+    "ten": "Cauthu34",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 35,
+    "ten": "Cauthu35",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 36,
+    "ten": "Cauthu36",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 37,
+    "ten": "Cauthu37",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 38,
+    "ten": "Cauthu38",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 39,
+    "ten": "Cauthu39",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "id": 40,
+    "ten": "Cauthu40",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  }
+]

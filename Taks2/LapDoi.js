@@ -210,59 +210,42 @@ function xoaCauThu() {
     });
 }
 
-function LapDoi3Nguoi() {
-    const atChubai = danhSach.find(cauThu => cauThu.vaiTro === 'atchubai');
-    if (!atChubai) {
-        console.log("Không có thành viên át chủ bài trong danh sách.");
-        menu();
-        return;
+function checkTeamValid(cauThu1, cauThu2, cauThu3) {
+    // Kiểm tra vai trò của các cầu thủ
+    const roles = [cauThu1.vaiTro, cauThu2.vaiTro, cauThu3.vaiTro];
+    if (
+        !roles.includes('atchubai') || 
+        !roles.includes('nongcot') || 
+        !roles.includes('dubi')       
+    ) {
+        return false;
     }
 
-    const danhSachNongcot = danhSach.filter(cauThu => cauThu.vaiTro === 'nongcot');
-    const danhSachDubi = danhSach.filter(cauThu => cauThu.vaiTro === 'dubi');
-
-    const ketQua = [];
-
-    danhSachNongcot.forEach(nongcot => {
-        danhSachDubi.forEach(dubi => {
-            // Kiểm tra điều kiện cặp bài trùng (nếu được bật)
-            if (
-                dieuKienCapBaiTrung &&
-                (
-                    (nongcot.capBaiTrung && nongcot.capBaiTrung !== dubi.ten) ||
-                    (dubi.capBaiTrung && dubi.capBaiTrung !== nongcot.ten) ||
-                    (atChubai.capBaiTrung && atChubai.capBaiTrung !== nongcot.ten && atChubai.capBaiTrung !== dubi.ten)
-                )
-            ) {
-                return;
-            }
-
-            // Kiểm tra điều kiện không hợp (nếu được bật)
-            if (
-                dieuKienKhongHop &&
-                (
-                    (nongcot.khongHop && nongcot.khongHop === dubi.ten) ||
-                    (dubi.khongHop && dubi.khongHop === nongcot.ten) ||
-                    (atChubai.khongHop && (atChubai.khongHop === nongcot.ten || atChubai.khongHop === dubi.ten))
-                )
-            ) {
-                return;
-            }
-
-            ketQua.push([atChubai.ten, nongcot.ten, dubi.ten]);
-        });
-    });
-
-    if (ketQua.length === 0) {
-        console.log("Không tìm thấy tổ hợp nào thoả mãn.");
-    } else {
-        console.log("Các tổ hợp 3 người thoả mãn:");
-        ketQua.forEach((toHop, index) => {
-            console.log(`${index + 1}: ${toHop.join(", ")}`);
-        });
+    // Kiểm tra điều kiện cặp bài trùng (nếu được bật)
+    if (
+        dieuKienCapBaiTrung &&
+        (
+            (cauThu1.capBaiTrung && cauThu1.capBaiTrung !== cauThu2.ten && cauThu1.capBaiTrung !== cauThu3.ten) ||
+            (cauThu2.capBaiTrung && cauThu2.capBaiTrung !== cauThu1.ten && cauThu2.capBaiTrung !== cauThu3.ten) ||
+            (cauThu3.capBaiTrung && cauThu3.capBaiTrung !== cauThu1.ten && cauThu3.capBaiTrung !== cauThu2.ten)
+        )
+    ) {
+        return false;
     }
 
-    menu();
+    // Kiểm tra điều kiện không hợp (nếu được bật)
+    if (
+        dieuKienKhongHop &&
+        (
+            (cauThu1.khongHop && (cauThu1.khongHop === cauThu2.ten || cauThu1.khongHop === cauThu3.ten)) ||
+            (cauThu2.khongHop && (cauThu2.khongHop === cauThu1.ten || cauThu2.khongHop === cauThu3.ten)) ||
+            (cauThu3.khongHop && (cauThu3.khongHop === cauThu1.ten || cauThu3.khongHop === cauThu2.ten))
+        )
+    ) {
+        return false;
+    }
+
+    return true;
 }
 
 function thayDoiDieuKienCapBaiTrung() {
@@ -289,6 +272,106 @@ function thayDoiDieuKienKhongHop() {
     });
 }
 
+function listTeamValid() {
+    const validTeams = [];
+    for (let i = 0; i < danhSach.length - 2; i++) {
+        for (let j = i + 1; j < danhSach.length - 1; j++) {
+            for (let k = j + 1; k < danhSach.length; k++) {
+                const cauThu1 = danhSach[i];
+                const cauThu2 = danhSach[j];
+                const cauThu3 = danhSach[k];
+                if (checkTeamValid(cauThu1, cauThu2, cauThu3)) {
+                    validTeams.push([cauThu1, cauThu2, cauThu3]);
+                }
+            }
+        }
+    }
+
+    console.log("Danh sách các đội hợp lệ:");
+    console.log("Đội\tCầu thủ 1 \tCầu thủ 2 \tCầu thủ 3 ");
+    validTeams.forEach((team, index) => {
+        const [cauThu1, cauThu2, cauThu3] = team;
+        console.log(
+            `${index + 1}\t${cauThu1.ten} (${cauThu1.vaiTro})\t${cauThu2.ten} (${cauThu2.vaiTro})\t${cauThu3.ten} (${cauThu3.vaiTro})`
+        );
+    });
+}
+
+function pickTeamToCheck() {
+
+    rl.question("Nhập ID của cầu thủ thứ nhất: ", (id1) => {
+        const cauThu1 = danhSach.find(c => c.id === parseInt(id1));
+        if (!cauThu1) {
+            console.log("ID không hợp lệ.");
+            menu();
+            return;
+        }
+
+        rl.question("Nhập ID của cầu thủ thứ hai: ", (id2) => {
+            const cauThu2 = danhSach.find(c => c.id === parseInt(id2));
+            if (!cauThu2) {
+                console.log("ID không hợp lệ.");
+                menu();
+                return;
+            }
+
+            rl.question("Nhập ID của cầu thủ thứ ba: ", (id3) => {
+                const cauThu3 = danhSach.find(c => c.id === parseInt(id3));
+                if (!cauThu3) {
+                    console.log("ID không hợp lệ.");
+                    menu();
+                    return;
+                }
+
+                if (checkTeamValid(cauThu1, cauThu2, cauThu3)) {
+                    console.log(`Đội hợp lệ: ${cauThu1.ten}, ${cauThu2.ten}, ${cauThu3.ten}`);
+                } else {
+                    console.log("Không thể tạo thành đội vì:");
+
+                    // Check roles
+                    const roles = [cauThu1.vaiTro, cauThu2.vaiTro, cauThu3.vaiTro];
+                    if (!roles.includes('atchubai')) {
+                        console.log("- Thiếu thành viên át chủ bài.");
+                    }
+                    if (!roles.includes('nongcot')) {
+                        console.log("- Thiếu thành viên nóng cốt.");
+                    }
+                    if (!roles.includes('dubi')) {
+                        console.log("- Thiếu thành viên dự bị.");
+                    }
+
+                    // Check capBaiTrung condition
+                    if (dieuKienCapBaiTrung) {
+                        if (cauThu1.capBaiTrung && cauThu1.capBaiTrung !== cauThu2.ten && cauThu1.capBaiTrung !== cauThu3.ten) {
+                            console.log(`- Cầu thủ ${cauThu1.ten} có cặp bài trùng (${cauThu1.capBaiTrung}) không nằm trong đội.`);
+                        }
+                        if (cauThu2.capBaiTrung && cauThu2.capBaiTrung !== cauThu1.ten && cauThu2.capBaiTrung !== cauThu3.ten) {
+                            console.log(`- Cầu thủ ${cauThu2.ten} có cặp bài trùng (${cauThu2.capBaiTrung}) không nằm trong đội.`);
+                        }
+                        if (cauThu3.capBaiTrung && cauThu3.capBaiTrung !== cauThu1.ten && cauThu3.capBaiTrung !== cauThu2.ten) {
+                            console.log(`- Cầu thủ ${cauThu3.ten} có cặp bài trùng (${cauThu3.capBaiTrung}) không nằm trong đội.`);
+                        }
+                    }
+
+                    // Check khongHop condition
+                    if (dieuKienKhongHop) {
+                        if (cauThu1.khongHop && (cauThu1.khongHop === cauThu2.ten || cauThu1.khongHop === cauThu3.ten)) {
+                            console.log(`- Cầu thủ ${cauThu1.ten} không hợp với ${cauThu1.khongHop}.`);
+                        }
+                        if (cauThu2.khongHop && (cauThu2.khongHop === cauThu1.ten || cauThu2.khongHop === cauThu3.ten)) {
+                            console.log(`- Cầu thủ ${cauThu2.ten} không hợp với ${cauThu2.khongHop}.`);
+                        }
+                        if (cauThu3.khongHop && (cauThu3.khongHop === cauThu1.ten || cauThu3.khongHop === cauThu2.ten)) {
+                            console.log(`- Cầu thủ ${cauThu3.ten} không hợp với ${cauThu3.khongHop}.`);
+                        }
+                    }
+                }
+                menu();
+            });
+        });
+    });
+}
+
 function menu() {
     console.log("Menu:");
     console.log("1. Hiển thị danh sách cầu thủ");
@@ -297,10 +380,11 @@ function menu() {
     console.log("4. Xoá cặp bài trùng");
     console.log("5. Xoá không hợp");
     console.log("6. Xoá toàn bộ dữ liệu");
-    console.log("7. Lập đội 3 người thoả mãn");
+    console.log("7. Liệt kê tất cả các đội 3 người hợp lệ");
     console.log("8. Bật/tắt điều kiện cặp bài trùng");
     console.log("9. Bật/tắt điều kiện không hợp");
     console.log("10. Xoá một cầu thủ");
+    console.log("11. Chọn tổ hợp 3 cầu thủ theo ID và kiểm tra");
     console.log("0. Thoát");
 
     rl.question("Chọn một tùy chọn: ", (option) => {
@@ -325,7 +409,8 @@ function menu() {
                 xoaToanBoDuLieu();
                 break;
             case "7":
-                LapDoi3Nguoi();
+                listTeamValid();
+                menu();
                 break;
             case "8":
                 thayDoiDieuKienCapBaiTrung();
@@ -335,6 +420,9 @@ function menu() {
                 break;
             case "10":
                 xoaCauThu();
+                break;
+            case "11":
+                pickTeamToCheck();
                 break;
             case "0":
                 console.log("Thoát chương trình.");
@@ -346,6 +434,8 @@ function menu() {
         }
     });
 }
+
+
 
 menu();
 
