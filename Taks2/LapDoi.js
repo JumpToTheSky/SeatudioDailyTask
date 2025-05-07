@@ -180,8 +180,10 @@ function xoaToanBoDuLieu() {
             danhSach = [];
             saveDanhSachToFile(danhSach); // Lưu danh sách trống vào file
             console.log("Toàn bộ dữ liệu đã được xoá.");
+            rl.close();
         } else {
             console.log("Hành động xoá dữ liệu đã bị huỷ.");
+            menu();
         }
     });
 }

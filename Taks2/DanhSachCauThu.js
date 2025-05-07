@@ -19,15 +19,16 @@ class CauThu {
 
 function taoDanhSachCauThu() {
     const danhSach = [];
-    const vaiTro = ['nongcot', 'dubi', 'binhthuong'];
+    const vaiTro = ['nongcot', 'dubi', 'binhthuong', 'atchubai'];
     let countNongcot = 0;
     let countDubi = 0;
     let countBinhthuong = 0;
+    let countAtchubai = 0;
 
-    for (let i = 1; i <= 39; i++) {
+    for (let i = 1; i <= 40; i++) {
         let role;
         while (true) {
-            role = vaiTro[Math.floor(Math.random() * 3)];
+            role = vaiTro[Math.floor(Math.random() * 4)];
             if (role === 'nongcot' && countNongcot < 5) {
                 countNongcot++;
                 break;
@@ -40,12 +41,14 @@ function taoDanhSachCauThu() {
                 countBinhthuong++;
                 break;
             }
+            if (role === 'atchubai' && countAtchubai < 1) {
+                countAtchubai++;
+                break;
+            }
         }
 
         danhSach.push(new CauThu(i, `Cauthu${i}`, role));
     }
-
-    danhSach.push(new CauThu(40, 'Cauthu40', 'atchubai'));
 
     saveDanhSachToFile(danhSach);
     return danhSach;
