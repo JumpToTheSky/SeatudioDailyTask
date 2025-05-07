@@ -21,7 +21,7 @@ class Student {
 }
 
 
-function nhapThongTin(index) {
+function nhapThongTin(index, soLuong, callback) {
     console.log(`\n--- Nhập thông tin học sinh thứ ${index + 1} ---`);
     rl.question('Họ và tên: ', (name) => {
         rl.question('Tuổi: ', (age) => {
@@ -32,9 +32,9 @@ function nhapThongTin(index) {
                     
                     index++;
                     if (index < soLuong) {
-                        nhapThongTin(index);
+                        nhapThongTin(index, soLuong, callback);
                     } else {
-                        rl.close();
+                        if (callback) callback();
                     }
                 });
             });
