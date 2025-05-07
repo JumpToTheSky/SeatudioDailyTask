@@ -1,26 +1,26 @@
 [
   {
     "ten": "Cauthu1",
-    "vaiTro": "nongcot",
-    "capBaiTrung": "Cauthu4",
-    "khongHop": "Cauthu3"
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
   },
   {
     "ten": "Cauthu2",
-    "vaiTro": "dubi",
+    "vaiTro": "binhthuong",
     "capBaiTrung": null,
     "khongHop": null
   },
   {
     "ten": "Cauthu3",
-    "vaiTro": "dubi",
+    "vaiTro": "nongcot",
     "capBaiTrung": null,
-    "khongHop": "Cauthu1"
+    "khongHop": null
   },
   {
     "ten": "Cauthu4",
-    "vaiTro": "dubi",
-    "capBaiTrung": "Cauthu1",
+    "vaiTro": "nongcot",
+    "capBaiTrung": null,
     "khongHop": null
   },
   {
@@ -31,19 +31,19 @@
   },
   {
     "ten": "Cauthu6",
-    "vaiTro": "dubi",
+    "vaiTro": "binhthuong",
     "capBaiTrung": null,
     "khongHop": null
   },
   {
     "ten": "Cauthu7",
-    "vaiTro": "nongcot",
+    "vaiTro": "dubi",
     "capBaiTrung": null,
     "khongHop": null
   },
   {
     "ten": "Cauthu8",
-    "vaiTro": "nongcot",
+    "vaiTro": "dubi",
     "capBaiTrung": null,
     "khongHop": null
   },
@@ -55,12 +55,186 @@
   },
   {
     "ten": "Cauthu10",
-    "vaiTro": "nongcot",
+    "vaiTro": "binhthuong",
     "capBaiTrung": null,
     "khongHop": null
   },
   {
     "ten": "Cauthu11",
+    "vaiTro": "dubi",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu12",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu13",
+    "vaiTro": "nongcot",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu14",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu15",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu16",
+    "vaiTro": "nongcot",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu17",
+    "vaiTro": "dubi",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu18",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu19",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu20",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu21",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu22",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu23",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu24",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu25",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu26",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu27",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu28",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu29",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu30",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu31",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu32",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu33",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu34",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu35",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu36",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu37",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu38",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu39",
+    "vaiTro": "binhthuong",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu40",
     "vaiTro": "atchubai",
     "capBaiTrung": null,
     "khongHop": null

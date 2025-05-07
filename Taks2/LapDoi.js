@@ -6,7 +6,9 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-let danhSach = loadDanhSachFromFile(); // Tự động load danh sách từ file
+let danhSach = loadDanhSachFromFile(); 
+let dieuKienCapBaiTrung = true; 
+let dieuKienKhongHop = true; 
 
 function hienThiDanhSachCauThu() {
     console.log("Danh sách các cầu thủ:");
@@ -16,9 +18,11 @@ function hienThiDanhSachCauThu() {
 }
 
 function chonCauThuKhongHop() {
-    hienThiDanhSachCauThu();
-
-    rl.question("Nhập số thứ tự của cầu thủ thứ nhất: ", (index1) => {
+    rl.question("Nhập số thứ tự của cầu thủ thứ nhất (hoặc nhập 'EXIT' để thoát): ", (index1) => {
+        if (index1.toLowerCase() === 'exit') {
+            menu();
+            return;
+        }
         const cauThu1 = danhSach[index1 - 1];
         if (!cauThu1) {
             console.log("Số thứ tự không hợp lệ.");
@@ -26,7 +30,11 @@ function chonCauThuKhongHop() {
             return;
         }
 
-        rl.question("Nhập số thứ tự của cầu thủ thứ hai: ", (index2) => {
+        rl.question("Nhập số thứ tự của cầu thủ thứ hai (hoặc nhập 'EXIT' để thoát): ", (index2) => {
+            if (index2.toLowerCase() === 'exit') {
+                menu();
+                return;
+            }
             const cauThu2 = danhSach[index2 - 1];
             if (!cauThu2) {
                 console.log("Số thứ tự không hợp lệ.");
@@ -51,9 +59,11 @@ function chonCauThuKhongHop() {
 }
 
 function chonCapBaiTrung() {
-    hienThiDanhSachCauThu();
-
-    rl.question("Nhập số thứ tự của cầu thủ thứ nhất: ", (index1) => {
+    rl.question("Nhập số thứ tự của cầu thủ thứ nhất (hoặc nhập 'EXIT' để thoát): ", (index1) => {
+        if (index1.toLowerCase() === 'exit') {
+            menu();
+            return;
+        }
         const cauThu1 = danhSach[index1 - 1];
         if (!cauThu1) {
             console.log("Số thứ tự không hợp lệ.");
@@ -61,7 +71,11 @@ function chonCapBaiTrung() {
             return;
         }
 
-        rl.question("Nhập số thứ tự của cầu thủ thứ hai: ", (index2) => {
+        rl.question("Nhập số thứ tự của cầu thủ thứ hai (hoặc nhập 'EXIT' để thoát): ", (index2) => {
+            if (index2.toLowerCase() === 'exit') {
+                menu();
+                return;
+            }
             const cauThu2 = danhSach[index2 - 1];
             if (!cauThu2) {
                 console.log("Số thứ tự không hợp lệ.");
@@ -101,7 +115,11 @@ function chonCapBaiTrung() {
 function xoaCapBaiTrung() {
     hienThiDanhSachCauThu();
 
-    rl.question("Nhập số thứ tự của cầu thủ muốn xoá cặp bài trùng: ", (index) => {
+    rl.question("Nhập số thứ tự của cầu thủ muốn xoá cặp bài trùng (hoặc nhập 'EXIT' để thoát): ", (index) => {
+        if (index.toLowerCase() === 'exit') {
+            menu();
+            return;
+        }
         const cauThu = danhSach[index - 1];
         if (!cauThu) {
             console.log("Số thứ tự không hợp lệ.");
@@ -126,7 +144,11 @@ function xoaCapBaiTrung() {
 function xoaKhongHop() {
     hienThiDanhSachCauThu();
 
-    rl.question("Nhập số thứ tự của cầu thủ muốn xoá không hợp: ", (index) => {
+    rl.question("Nhập số thứ tự của cầu thủ muốn xoá không hợp (hoặc nhập 'EXIT' để thoát): ", (index) => {
+        if (index.toLowerCase() === 'exit') {
+            menu();
+            return;
+        }
         const cauThu = danhSach[index - 1];
         if (!cauThu) {
             console.log("Số thứ tự không hợp lệ.");
@@ -149,7 +171,11 @@ function xoaKhongHop() {
 }
 
 function xoaToanBoDuLieu() {
-    rl.question("Bạn có chắc chắn muốn xoá toàn bộ dữ liệu? (y/n): ", (confirm) => {
+    rl.question("Bạn có chắc chắn muốn xoá toàn bộ dữ liệu? (y/n hoặc nhập 'EXIT' để thoát): ", (confirm) => {
+        if (confirm.toLowerCase() === 'exit') {
+            menu();
+            return;
+        }
         if (confirm.toLowerCase() === 'y') {
             danhSach = [];
             saveDanhSachToFile(danhSach); // Lưu danh sách trống vào file
@@ -157,7 +183,6 @@ function xoaToanBoDuLieu() {
         } else {
             console.log("Hành động xoá dữ liệu đã bị huỷ.");
         }
-        menu();
     });
 }
 
@@ -176,20 +201,26 @@ function LapDoi3Nguoi() {
 
     danhSachNongcot.forEach(nongcot => {
         danhSachDubi.forEach(dubi => {
-            // Kiểm tra điều kiện cặp bài trùng
+            // Kiểm tra điều kiện cặp bài trùng (nếu được bật)
             if (
-                (nongcot.capBaiTrung && nongcot.capBaiTrung !== dubi.ten) ||
-                (dubi.capBaiTrung && dubi.capBaiTrung !== nongcot.ten) ||
-                (atChubai.capBaiTrung && atChubai.capBaiTrung !== nongcot.ten && atChubai.capBaiTrung !== dubi.ten)
+                dieuKienCapBaiTrung &&
+                (
+                    (nongcot.capBaiTrung && nongcot.capBaiTrung !== dubi.ten) ||
+                    (dubi.capBaiTrung && dubi.capBaiTrung !== nongcot.ten) ||
+                    (atChubai.capBaiTrung && atChubai.capBaiTrung !== nongcot.ten && atChubai.capBaiTrung !== dubi.ten)
+                )
             ) {
                 return;
             }
 
-            // Kiểm tra điều kiện không hợp
+            // Kiểm tra điều kiện không hợp (nếu được bật)
             if (
-                (nongcot.khongHop && nongcot.khongHop === dubi.ten) ||
-                (dubi.khongHop && dubi.khongHop === nongcot.ten) ||
-                (atChubai.khongHop && (atChubai.khongHop === nongcot.ten || atChubai.khongHop === dubi.ten))
+                dieuKienKhongHop &&
+                (
+                    (nongcot.khongHop && nongcot.khongHop === dubi.ten) ||
+                    (dubi.khongHop && dubi.khongHop === nongcot.ten) ||
+                    (atChubai.khongHop && (atChubai.khongHop === nongcot.ten || atChubai.khongHop === dubi.ten))
+                )
             ) {
                 return;
             }
@@ -210,6 +241,30 @@ function LapDoi3Nguoi() {
     menu();
 }
 
+function thayDoiDieuKienCapBaiTrung() {
+    rl.question("Bạn có muốn bật/tắt điều kiện cặp bài trùng? (y/n): ", (confirm) => {
+        if (confirm.toLowerCase() === 'y') {
+            dieuKienCapBaiTrung = !dieuKienCapBaiTrung;
+            console.log(`Điều kiện cặp bài trùng đã được ${dieuKienCapBaiTrung ? 'bật' : 'tắt'}.`);
+        } else {
+            console.log("Không thay đổi điều kiện cặp bài trùng.");
+        }
+        menu();
+    });
+}
+
+function thayDoiDieuKienKhongHop() {
+    rl.question("Bạn có muốn bật/tắt điều kiện không hợp? (y/n): ", (confirm) => {
+        if (confirm.toLowerCase() === 'y') {
+            dieuKienKhongHop = !dieuKienKhongHop;
+            console.log(`Điều kiện không hợp đã được ${dieuKienKhongHop ? 'bật' : 'tắt'}.`);
+        } else {
+            console.log("Không thay đổi điều kiện không hợp.");
+        }
+        menu();
+    });
+}
+
 function menu() {
     console.log("Menu:");
     console.log("1. Hiển thị danh sách cầu thủ");
@@ -219,6 +274,8 @@ function menu() {
     console.log("5. Xoá không hợp");
     console.log("6. Xoá toàn bộ dữ liệu");
     console.log("7. Lập đội 3 người thoả mãn");
+    console.log("8. Bật/tắt điều kiện cặp bài trùng");
+    console.log("9. Bật/tắt điều kiện không hợp");
     console.log("0. Thoát");
 
     rl.question("Chọn một tùy chọn: ", (option) => {
@@ -244,6 +301,12 @@ function menu() {
                 break;
             case "7":
                 LapDoi3Nguoi();
+                break;
+            case "8":
+                thayDoiDieuKienCapBaiTrung();
+                break;
+            case "9":
+                thayDoiDieuKienKhongHop();
                 break;
             case "0":
                 console.log("Thoát chương trình.");
