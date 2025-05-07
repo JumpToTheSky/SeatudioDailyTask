@@ -1,4 +1,7 @@
 const readline = require('readline');
+const { hienThiDanhSachHocSinh } = require('./DisplayStudent');
+const { danhSachHocSinh } = require('./StudentList');
+
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
@@ -17,9 +20,6 @@ class Student {
     }
 }
 
-let danhSachHocSinh = [];
-let soLuong = 0;
-let index = 0;
 
 function nhapThongTin(index) {
     console.log(`\n--- Nhập thông tin học sinh thứ ${index + 1} ---`);
@@ -34,27 +34,14 @@ function nhapThongTin(index) {
                     if (index < soLuong) {
                         nhapThongTin(index);
                     } else {
-                        console.log('\nDanh sách học sinh :');
-                        danhSachHocSinh.forEach((student, i) => {
-                            console.log(`SV ${i + 1}:`);
-                            student.hienThiThongTin();
-                        });
                         rl.close();
                     }
                 });
             });
-            
-          });
         });
-    };
+    });
+}
 
-  
-  rl.question('Nhập số lượng học sinh: ', (so) => {
-    soLuong = parseInt(so);
-    if (isNaN(soLuong) || soLuong <= 0) {
-      console.log('Số lượng không hợp lệ.');
-      rl.close();
-    } else {
-      nhapThongTin(index);
-    }
-  });
+module.exports = { Student, nhapThongTin };
+
+
