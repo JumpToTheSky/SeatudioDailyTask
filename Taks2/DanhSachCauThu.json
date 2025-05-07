@@ -1,0 +1,68 @@
+[
+  {
+    "ten": "Cauthu1",
+    "vaiTro": "nongcot",
+    "capBaiTrung": "Cauthu4",
+    "khongHop": "Cauthu3"
+  },
+  {
+    "ten": "Cauthu2",
+    "vaiTro": "dubi",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu3",
+    "vaiTro": "dubi",
+    "capBaiTrung": null,
+    "khongHop": "Cauthu1"
+  },
+  {
+    "ten": "Cauthu4",
+    "vaiTro": "dubi",
+    "capBaiTrung": "Cauthu1",
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu5",
+    "vaiTro": "nongcot",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu6",
+    "vaiTro": "dubi",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu7",
+    "vaiTro": "nongcot",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu8",
+    "vaiTro": "nongcot",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu9",
+    "vaiTro": "dubi",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu10",
+    "vaiTro": "nongcot",
+    "capBaiTrung": null,
+    "khongHop": null
+  },
+  {
+    "ten": "Cauthu11",
+    "vaiTro": "atchubai",
+    "capBaiTrung": null,
+    "khongHop": null
+  }
+]

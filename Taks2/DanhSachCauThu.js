@@ -1,11 +1,18 @@
+const fs = require('fs');
+const path = require('path');
+
+const filePath = path.join(__dirname, 'DanhSachCauThu.json');
+
 class CauThu {
-    constructor(ten, vaiTro, capBaiTrung, khongHop) {
+    constructor(ten, vaiTro, capBaiTrung = null, khongHop = null) {
         this.ten = ten;
         this.vaiTro = vaiTro; 
+        this.capBaiTrung = capBaiTrung;
+        this.khongHop = khongHop;
     }
 
     hienThiThongTin() {
-        console.log(`Tên: ${this.ten}, Vị trí: ${this.vaiTro}`);
+        console.log(`Tên: ${this.ten}, Vị trí: ${this.vaiTro}, Không hợp: ${this.khongHop || 'Không có'}, Cặp bài trùng: ${this.capBaiTrung || 'Không có'}`);
     }
 }
 
@@ -33,6 +40,7 @@ function taoDanhSachCauThu() {
 
     danhSach.push(new CauThu('Cauthu11', 'atchubai'));
 
+    saveDanhSachToFile(danhSach);
     return danhSach;
 }
 
@@ -42,12 +50,25 @@ function tachDanhSach(danhSach) {
     return { danhSachNongcot, danhSachDubi };
 }
 
-const danhSachCauThu = taoDanhSachCauThu();
+function saveDanhSachToFile(danhSach) {
+    fs.writeFileSync(filePath, JSON.stringify(danhSach, null, 2), 'utf-8');
+}
+
+function loadDanhSachFromFile() {
+    if (fs.existsSync(filePath)) {
+        const data = fs.readFileSync(filePath, 'utf-8');
+        if (data.trim()) { // Kiểm tra nếu file không rỗng
+            const danhSach = JSON.parse(data);
+            return danhSach.map(cauThu => new CauThu(cauThu.ten, cauThu.vaiTro, cauThu.capBaiTrung, cauThu.khongHop));
+        }
+    }
+    return taoDanhSachCauThu(); 
+}
+const danhSachCauThu = loadDanhSachFromFile();
 const { danhSachNongcot, danhSachDubi } = tachDanhSach(danhSachCauThu);
 
-module.exports = { taoDanhSachCauThu, danhSachCauThu, danhSachNongcot, danhSachDubi };
-/*danhSachCauThu.forEach((cauThu, i) => {
+module.exports = { CauThu, loadDanhSachFromFile, saveDanhSachToFile, danhSachNongcot, danhSachDubi };
+/* danhSachCauThu.forEach((cauThu, i) => {
     console.log(`Cầu thủ ${i + 1}:`);
     cauThu.hienThiThongTin();
-}
-);*/
+}); */
