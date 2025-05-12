@@ -48,7 +48,6 @@ function showMenu() {
 
                 const [success, message] = borrowBook(user, book);
                 console.log(message);
-                // Note: Changes are in-memory. To persist, you'd need to write back to JSON files.
                 displayMenu();
             });
         });
@@ -86,7 +85,6 @@ function showMenu() {
                 
                 const [success, message] = returnBook(user, bookId, allBooks);
                 console.log(message);
-                // Note: Changes are in-memory. To persist, you'd need to write back to JSON files.
                 displayMenu();
             });
         });
@@ -127,9 +125,7 @@ function showMenu() {
             }
         });
     }
-    // Initial load can be done here or lazily as implemented
-    // loadAllData().then(displayMenu); 
-    displayMenu(); // Start with menu, load data on demand
+    displayMenu();
 }
 
 showMenu();

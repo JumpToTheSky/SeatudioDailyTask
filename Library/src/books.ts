@@ -1,5 +1,3 @@
-// filepath: /Users/sea-013/Documents/GitHub/SeatudioDailyTask/Library/src/books.ts
-
 import { loadDataFromJSON } from './utils';
 
 export interface Book {
