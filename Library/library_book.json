@@ -1,0 +1,57 @@
+[
+    {
+      "id": 1,
+      "title": "To Kill a Mockingbird",
+      "author": "Harper Lee",
+      "genre": "Fiction",
+      "published_year": 1960,
+      "cover_image": "https://example.com/images/to_kill_a_mockingbird.jpg",
+      "edition_count": 8,
+      "description": "A timeless novel that explores human morality and the perils of prejudice through the eyes of a young girl in the American South.",
+      "copies": 4
+    },
+    {
+      "id": 2,
+      "title": "1984",
+      "author": "George Orwell",
+      "genre": "Dystopian",
+      "published_year": 1949,
+      "cover_image": "https://example.com/images/1984.jpg",
+      "edition_count": 15,
+      "description": "A dystopian masterpiece that delves into the dangers of totalitarianism and extreme political ideology.",
+      "copies": 2
+    },
+    {
+      "id": 3,
+      "title": "Pride and Prejudice",
+      "author": "Jane Austen",
+      "genre": "Romance",
+      "published_year": 1813,
+      "cover_image": "https://example.com/images/pride_and_prejudice.jpg",
+      "edition_count": 20,
+      "description": "A classic romantic novel that examines themes of love, class, and reputation in 19th century England.",
+      "copies": 5
+    },
+    {
+      "id": 4,
+      "title": "The Great Gatsby",
+      "author": "F. Scott Fitzgerald",
+      "genre": "Fiction",
+      "published_year": 1925,
+      "cover_image": "https://example.com/images/the_great_gatsby.jpg",
+      "edition_count": 10,
+      "description": "A critique of the American Dream set in the Roaring Twenties, filled with glamour, love, and tragedy.",
+      "copies": 3
+    },
+    {
+      "id": 5,
+      "title": "Moby Dick",
+      "author": "Herman Melville",
+      "genre": "Adventure",
+      "published_year": 1851,
+      "cover_image": "https://example.com/images/moby_dick.jpg",
+      "edition_count": 12,
+      "description": "An epic tale of man's obsession and the destructive pursuit of vengeance, centered around a legendary white whale.",
+      "copies": 1
+    }
+  ]
