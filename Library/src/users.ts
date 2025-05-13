@@ -15,7 +15,7 @@ export interface User {
     address: string;
 }
 
-export function displayUsers(users: User[]) {
+export function displayUsers(users: User[]): boolean {
     console.log("\nList of Users:");
     users.forEach(user => {
         console.log(`- ${user.name} (${user.email}) [ID: ${user.user_id}]`);
@@ -23,6 +23,7 @@ export function displayUsers(users: User[]) {
         console.log(`  Address: ${user.address}`);
         console.log("--------------------------------------------------");
     });
+    return true;
 }
 
 export async function fetchUsers(): Promise<User[]> {
@@ -46,11 +47,13 @@ export function removeUser(users: User[], userIdToRemove: number): [User[], bool
     return [updatedUsers, userWasRemoved];
 }
 
-export async function saveUsers(users: User[]): Promise<void> {
+export async function saveUsers(users: User[]): Promise<boolean> {
     try {
         await saveDataToJSON<User>('../library_user.json', users);
         console.log("User data saved successfully.");
+        return true;
     } catch (error) {
         console.error("Failed to save user data:", error);
+        return false;
     }
 }

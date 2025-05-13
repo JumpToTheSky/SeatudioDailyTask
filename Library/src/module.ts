@@ -32,12 +32,14 @@ export async function fetchBorrowedBooks(): Promise<BorrowedBook[]> {
     return borrowedBooks;
 }
 
-export async function saveBorrowedBooks(borrowedBooks: BorrowedBook[]): Promise<void> {
+export async function saveBorrowedBooks(borrowedBooks: BorrowedBook[]): Promise<boolean> {
     try {
         await saveDataToJSON<BorrowedBook>('../borrowed_book.json', borrowedBooks);
         console.log("Borrowed book data saved successfully.");
+        return true;
     } catch (error) {
         console.error("Failed to save borrowed book data:", error);
+        return false;
     }
 }
 
@@ -81,7 +83,7 @@ export function returnBook<BB extends BorrowedBook, B extends Book>(
             };
         }
         return borrowedRecord;
-    }) as BB[]; // Cast to BB[] to maintain the generic type
+    }) as BB[]; 
 
     const bookInLibrary = allBooks.find(b => b.id === bookIdToReturn);
     if (bookInLibrary) {

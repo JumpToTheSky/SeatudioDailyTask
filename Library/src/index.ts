@@ -7,7 +7,7 @@ let allUsers: User[] = [];
 let allBorrowedBookRecords: BorrowedBook[] = [];
 let dataLoaded = false;
 
-async function loadAllData() {
+async function loadAllData(): Promise<boolean> {
     if (!dataLoaded) {
         allBooks = await fetchBooks();
         allUsers = await fetchUsers();
@@ -15,15 +15,16 @@ async function loadAllData() {
         dataLoaded = true;
         console.log("Initial book, user, and borrowed book data loaded.");
     }
+    return true;
 }
 
-function showMenu() {
+function showMenu(): boolean {
     const readline = require('readline').createInterface({
         input: process.stdin,
         output: process.stdout
     });
 
-    async function handleBorrowBook() {
+    async function handleBorrowBook(): Promise<boolean> {
         if (!dataLoaded) {
             await loadAllData();
         }
@@ -35,7 +36,7 @@ function showMenu() {
             if (!user) {
                 console.log("User not found.");
                 displayMenu();
-                return;
+                return true;
             }
 
             readline.question("Enter Book ID to borrow: ", async (bookIdStr: string) => {
@@ -45,7 +46,7 @@ function showMenu() {
                 if (!book) {
                     console.log("Book not found.");
                     displayMenu();
-                    return;
+                    return true;
                 }
 
                 const [newBorrowedRecord, message] = borrowBook(user, book);
@@ -59,9 +60,10 @@ function showMenu() {
                 displayMenu();
             });
         });
+        return true;
     }
 
-    async function handleReturnBook() {
+    async function handleReturnBook(): Promise<boolean> {
         if (!dataLoaded) {
             await loadAllData();
         }
@@ -73,7 +75,7 @@ function showMenu() {
             if (!user) {
                 console.log("User not found.");
                 displayMenu();
-                return;
+                return true;
             }
 
             const userActiveBorrows = allBorrowedBookRecords.filter(
@@ -83,7 +85,7 @@ function showMenu() {
             if (userActiveBorrows.length === 0) {
                 console.log(`${user.name} has no active borrows to return.`);
                 displayMenu();
-                return;
+                return true;
             }
 
             console.log(`${user.name}'s actively borrowed books:`);
@@ -105,9 +107,10 @@ function showMenu() {
                 displayMenu();
             });
         });
+        return true;
     }
 
-    async function handleAddUser() {
+    async function handleAddUser(): Promise<boolean> {
         if (!dataLoaded) {
             await loadAllData();
         }
@@ -124,9 +127,10 @@ function showMenu() {
                 });
             });
         });
+        return true;
     }
 
-    async function handleRemoveUser() {
+    async function handleRemoveUser(): Promise<boolean> {
         if (!dataLoaded) {
             await loadAllData();
         }
@@ -135,7 +139,7 @@ function showMenu() {
             if (isNaN(userId)) {
                 console.log("Invalid User ID format.");
                 displayMenu();
-                return;
+                return true;
             }
 
             const [updatedUsers, userWasRemoved] = removeUser(allUsers, userId);
@@ -148,9 +152,10 @@ function showMenu() {
             }
             displayMenu();
         });
+        return true;
     }
 
-    function displayMenu() {
+    function displayMenu(): boolean {
         console.log("\nLibrary Management System");
         console.log("1. Display list of books");
         console.log("2. Display list of users");
@@ -203,8 +208,10 @@ function showMenu() {
                     displayMenu();
             }
         });
+        return true;
     }
     displayMenu();
+    return true;
 }
 
 showMenu();

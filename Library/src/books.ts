@@ -12,7 +12,7 @@ export interface Book {
     copies: number;
 }
 
-export function displayBooks(books: Book[]) {
+export function displayBooks(books: Book[]): boolean {
     console.log("\nList of Books:");
     books.forEach(book => {
         console.log(`- ${book.title} by ${book.author} (${book.published_year})`);
@@ -21,6 +21,7 @@ export function displayBooks(books: Book[]) {
         console.log(`  Copies Available: ${book.copies}`);
         console.log("--------------------------------------------------");
     });
+    return true;
 }
 
 export async function fetchBooks(): Promise<Book[]> {
@@ -28,11 +29,13 @@ export async function fetchBooks(): Promise<Book[]> {
     return books;
 }
 
-export async function saveBooks(books: Book[]): Promise<void> {
+export async function saveBooks(books: Book[]): Promise<boolean> {
     try {
         await saveDataToJSON<Book>('../library_book.json', books);
         console.log("Book data saved successfully.");
+        return true;
     } catch (error) {
         console.error("Failed to save book data:", error);
+        return false;
     }
 }
