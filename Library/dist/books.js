@@ -24,6 +24,7 @@ function displayBooks(books) {
         head: ['ID', 'Title', 'Author', 'Year', 'Genre', 'Copies'],
         colWidths: [5, 30, 20, 10, 15, 10],
         style: { head: ['black', 'bgWhite'] },
+        wordWrap: true, // Enable word wrapping
     });
     books.forEach(book => {
         table.push([

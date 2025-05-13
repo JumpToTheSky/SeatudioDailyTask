@@ -282,6 +282,7 @@ function displayBorrowedRecords(records: BorrowedBook[], users: User[], books: B
         head: ['User Name', 'Book Title', 'Borrow Date', 'Return Date'],
         colWidths: [20, 30, 15, 15],
         style: { head: ['black', 'bgWhite'] },
+        wordWrap: true, // Enable word wrapping
     });
 
     records.forEach(record => {
@@ -304,6 +305,7 @@ function displayOverdueRecords(records: BorrowedBook[], users: User[], books: Bo
         head: ['User Name', 'Book Title', 'Borrow Date', 'Days Overdue'],
         colWidths: [20, 30, 15, 15],
         style: { head: ['black', 'bgWhite'] },
+        wordWrap: true, // Enable word wrapping
     });
 
     const today = new Date();
@@ -334,6 +336,7 @@ function displayLateReturns(records: BorrowedBook[], users: User[], books: Book[
         head: ['User Name', 'Book Title', 'Borrow Date', 'Return Date', 'Days Late'],
         colWidths: [20, 30, 15, 15, 15],
         style: { head: ['black', 'bgWhite'] },
+        wordWrap: true, // Enable word wrapping
     });
 
     records.forEach(record => {

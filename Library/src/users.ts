@@ -20,7 +20,8 @@ export function displayUsers(users: User[]): boolean {
     const table = new Table({
         head: ['ID', 'Name', 'Email', 'Phone', 'Address'],
         colWidths: [5, 20, 30, 15, 30],
-        style: { head: ['black', 'bgWhite'] }, 
+        style: { head: ['black', 'bgWhite'] },
+        wordWrap: true, // Enable word wrapping
     });
 
     users.forEach(user => {

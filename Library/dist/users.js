@@ -24,6 +24,7 @@ function displayUsers(users) {
         head: ['ID', 'Name', 'Email', 'Phone', 'Address'],
         colWidths: [5, 20, 30, 15, 30],
         style: { head: ['black', 'bgWhite'] },
+        wordWrap: true, // Enable word wrapping
     });
     users.forEach(user => {
         table.push([
