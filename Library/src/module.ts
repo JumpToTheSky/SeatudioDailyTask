@@ -1,7 +1,9 @@
+// src/module.ts
+
 import * as fs from 'fs';
 import * as path from 'path';
-import { User, BorrowedBook } from './users';
-import { Book } from './books';
+import { User, BorrowedBook } from './users'; // Giữ nguyên import này
+import { Book } from './books'; // Giữ nguyên import này
 
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
 
@@ -30,13 +32,15 @@ export async function saveDataToJSON<T>(url: string, data: T[]): Promise<T[]> {
 }
 
 export async function fetchBorrowedBooks(): Promise<BorrowedBook[]> {
-    const borrowedBooks = await loadDataFromJSON<BorrowedBook>('../borrowed_book.json');
+    // Thay đổi đường dẫn ở đây
+    const borrowedBooks = await loadDataFromJSON<BorrowedBook>('./data/borrowed_book.json');
     return borrowedBooks;
 }
 
 export async function saveBorrowedBooks(borrowedBooks: BorrowedBook[]): Promise<boolean> {
     try {
-        await saveDataToJSON<BorrowedBook>('../borrowed_book.json', borrowedBooks);
+        // Thay đổi đường dẫn ở đây
+        await saveDataToJSON<BorrowedBook>('./data/borrowed_book.json', borrowedBooks);
         console.log("Borrowed book data saved successfully.");
         return true;
     } catch (error) {

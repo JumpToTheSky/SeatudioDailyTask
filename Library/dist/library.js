@@ -295,6 +295,53 @@ function handleRemoveBookCopies(rl) {
         return true;
     });
 }
+function handleAddBook(rl) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!dataLoaded) {
+            yield loadAllData();
+        }
+        rl.question("Enter book title: ", (title) => {
+            rl.question("Enter book author: ", (author) => {
+                rl.question("Enter book genre: ", (genre) => {
+                    rl.question("Enter published year: ", (publishedYearStr) => {
+                        const published_year = parseInt(publishedYearStr);
+                        if (isNaN(published_year)) {
+                            console.log("Invalid published year.");
+                            displayMenu(rl);
+                            return true;
+                        }
+                        rl.question("Enter cover image URL: ", (cover_image) => {
+                            rl.question("Enter edition count: ", (editionCountStr) => {
+                                const edition_count = parseInt(editionCountStr);
+                                if (isNaN(edition_count)) {
+                                    console.log("Invalid edition count.");
+                                    displayMenu(rl);
+                                    return true;
+                                }
+                                rl.question("Enter book description: ", (description) => {
+                                    rl.question("Enter number of copies: ", (copiesStr) => __awaiter(this, void 0, void 0, function* () {
+                                        const copies = parseInt(copiesStr);
+                                        if (isNaN(copies) || copies < 0) {
+                                            console.log("Invalid number of copies.");
+                                            displayMenu(rl);
+                                            return true;
+                                        }
+                                        const newBookDetails = { title, author, genre, published_year, cover_image, edition_count, description, copies };
+                                        allBooks = (0, books_1.addBook)(allBooks, newBookDetails);
+                                        yield (0, books_1.saveBooks)(allBooks);
+                                        console.log(`Book "${title}" added successfully with ID ${allBooks[allBooks.length - 1].id}.`);
+                                        displayMenu(rl);
+                                    }));
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        });
+        return true;
+    });
+}
 function handleDisplayBooks() {
     return __awaiter(this, void 0, void 0, function* () {
         if (!dataLoaded) {
@@ -401,11 +448,12 @@ function displayMenu(rl) {
     console.log("7. Display all borrowed book records");
     console.log("8. Check Overdue Borrows (Not returned > 1 week)");
     console.log("9. Check Late Returns (Returned > 1 week)");
-    console.log("10. Remove a Book from Library");
-    console.log("11. Add Copies to a Book");
-    console.log("12. Remove Copies from a Book");
-    console.log("13. Exit");
-    rl.question("Enter your choice (1-13): ", (choice) => __awaiter(this, void 0, void 0, function* () {
+    console.log("10. Add a new book");
+    console.log("11. Remove a Book from Library");
+    console.log("12. Add Copies to a Book");
+    console.log("13. Remove Copies from a Book");
+    console.log("14. Exit");
+    rl.question("Enter your choice (1-14): ", (choice) => __awaiter(this, void 0, void 0, function* () {
         switch (choice) {
             case "1":
                 yield handleDisplayBooks();
@@ -446,15 +494,18 @@ function displayMenu(rl) {
                 displayMenu(rl);
                 break;
             case "10":
-                yield handleRemoveBook(rl);
+                yield handleAddBook(rl);
                 break;
             case "11":
-                yield handleAddBookCopies(rl);
+                yield handleRemoveBook(rl);
                 break;
             case "12":
-                yield handleRemoveBookCopies(rl);
+                yield handleAddBookCopies(rl);
                 break;
             case "13":
+                yield handleRemoveBookCopies(rl);
+                break;
+            case "14":
                 console.log("Exiting...");
                 rl.close();
                 break;

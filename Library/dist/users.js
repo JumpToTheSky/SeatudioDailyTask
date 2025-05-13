@@ -1,4 +1,5 @@
 "use strict";
+// src/users.ts
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -41,7 +42,8 @@ function displayUsers(users) {
 }
 function fetchUsers() {
     return __awaiter(this, void 0, void 0, function* () {
-        const users = yield (0, module_1.loadDataFromJSON)('../library_user.json');
+        // Thay đổi đường dẫn ở đây
+        const users = yield (0, module_1.loadDataFromJSON)('./data/library_user.json');
         return users;
     });
 }
@@ -59,7 +61,8 @@ function removeUser(users, userIdToRemove) {
 function saveUsers(users) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield (0, module_1.saveDataToJSON)('../library_user.json', users);
+            // Thay đổi đường dẫn ở đây
+            yield (0, module_1.saveDataToJSON)('./data/library_user.json', users);
             console.log("User data saved successfully.");
             return true;
         }

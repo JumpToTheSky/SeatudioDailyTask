@@ -1,4 +1,5 @@
 "use strict";
+// src/module.ts
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -81,14 +82,16 @@ function saveDataToJSON(url, data) {
 }
 function fetchBorrowedBooks() {
     return __awaiter(this, void 0, void 0, function* () {
-        const borrowedBooks = yield loadDataFromJSON('../borrowed_book.json');
+        // Thay đổi đường dẫn ở đây
+        const borrowedBooks = yield loadDataFromJSON('./data/borrowed_book.json');
         return borrowedBooks;
     });
 }
 function saveBorrowedBooks(borrowedBooks) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield saveDataToJSON('../borrowed_book.json', borrowedBooks);
+            // Thay đổi đường dẫn ở đây
+            yield saveDataToJSON('./data/borrowed_book.json', borrowedBooks);
             console.log("Borrowed book data saved successfully.");
             return true;
         }

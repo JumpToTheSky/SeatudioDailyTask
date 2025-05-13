@@ -1,3 +1,5 @@
+// src/users.ts
+
 import { loadDataFromJSON, saveDataToJSON } from './module';
 import Table from 'cli-table3';
 
@@ -40,7 +42,8 @@ export function displayUsers(users: User[]): boolean {
 }
 
 export async function fetchUsers(): Promise<User[]> {
-    const users = await loadDataFromJSON<User>('../library_user.json');
+    // Thay đổi đường dẫn ở đây
+    const users = await loadDataFromJSON<User>('./data/library_user.json');
     return users;
 }
 
@@ -62,7 +65,8 @@ export function removeUser(users: User[], userIdToRemove: number): [User[], bool
 
 export async function saveUsers(users: User[]): Promise<boolean> {
     try {
-        await saveDataToJSON<User>('../library_user.json', users);
+        // Thay đổi đường dẫn ở đây
+        await saveDataToJSON<User>('./data/library_user.json', users);
         console.log("User data saved successfully.");
         return true;
     } catch (error) {

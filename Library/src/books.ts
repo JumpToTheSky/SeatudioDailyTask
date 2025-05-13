@@ -1,3 +1,5 @@
+// src/books.ts
+
 import { loadDataFromJSON, saveDataToJSON } from './module';
 import { BorrowedBook } from './users';
 import Table from 'cli-table3';
@@ -39,19 +41,30 @@ export function displayBooks(books: Book[]): boolean {
 }
 
 export async function fetchBooks(): Promise<Book[]> {
-    const books = await loadDataFromJSON<Book>('../library_book.json');
+    // Thay đổi đường dẫn ở đây
+    const books = await loadDataFromJSON<Book>('./data/library_book.json');
     return books;
 }
 
 export async function saveBooks(books: Book[]): Promise<boolean> {
     try {
-        await saveDataToJSON<Book>('../library_book.json', books);
+        // Thay đổi đường dẫn ở đây
+        await saveDataToJSON<Book>('./data/library_book.json', books);
         console.log("Book data saved successfully.");
         return true;
     } catch (error) {
         console.error("Failed to save book data:", error);
         return false;
     }
+}
+
+export function addBook(books: Book[], newBookDetails: Omit<Book, 'id'>): Book[] {
+    const maxId = books.reduce((max, book) => (book.id > max ? book.id : max), 0);
+    const newBook: Book = {
+        ...newBookDetails,
+        id: maxId + 1,
+    };
+    return [...books, newBook];
 }
 
 export function removeBookCompletely(
