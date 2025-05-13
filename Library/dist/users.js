@@ -8,6 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.displayUsers = displayUsers;
 exports.fetchUsers = fetchUsers;
@@ -15,14 +18,24 @@ exports.addUser = addUser;
 exports.removeUser = removeUser;
 exports.saveUsers = saveUsers;
 const module_1 = require("./module");
+const cli_table3_1 = __importDefault(require("cli-table3"));
 function displayUsers(users) {
-    console.log("\nList of Users:");
-    users.forEach(user => {
-        console.log(`- ${user.name} (${user.email}) [ID: ${user.user_id}]`);
-        console.log(`  Phone: ${user.phone}`);
-        console.log(`  Address: ${user.address}`);
-        console.log("--------------------------------------------------");
+    const table = new cli_table3_1.default({
+        head: ['ID', 'Name', 'Email', 'Phone', 'Address'],
+        colWidths: [5, 20, 30, 15, 30],
+        style: { head: ['white'] },
     });
+    users.forEach(user => {
+        table.push([
+            user.user_id,
+            user.name,
+            user.email,
+            user.phone,
+            user.address,
+        ]);
+    });
+    console.log("\nList of Users:");
+    console.log(table.toString());
     return true;
 }
 function fetchUsers() {

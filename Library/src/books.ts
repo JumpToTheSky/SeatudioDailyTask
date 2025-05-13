@@ -1,5 +1,6 @@
 import { loadDataFromJSON, saveDataToJSON } from './module';
-import { BorrowedBook } from './users'; // Added import for BorrowedBook
+import { BorrowedBook } from './users';
+import Table from 'cli-table3';
 
 export interface Book {
     id: number;
@@ -14,14 +15,25 @@ export interface Book {
 }
 
 export function displayBooks(books: Book[]): boolean {
-    console.log("\nList of Books:");
-    books.forEach(book => {
-        console.log(`- ${book.title} by ${book.author} (${book.published_year})`);
-        console.log(`  Genre: ${book.genre}`);
-        console.log(`  Description: ${book.description}`);
-        console.log(`  Copies Available: ${book.copies}`);
-        console.log("--------------------------------------------------");
+    const table = new Table({
+        head: ['ID', 'Title', 'Author', 'Year', 'Genre', 'Copies'],
+        colWidths: [5, 30, 20, 10, 15, 10],
+        style: { head: ['black', 'bgWhite'] }, 
     });
+
+    books.forEach(book => {
+        table.push([
+            book.id,
+            book.title,
+            book.author,
+            book.published_year,
+            book.genre,
+            book.copies,
+        ]);
+    });
+
+    console.log("\nList of Books:");
+    console.log(table.toString());
     return true;
 }
 
@@ -68,7 +80,7 @@ export function removeBookCompletely(
 export function updateBookCopies(
     books: Book[],
     bookId: number,
-    change: number // positive to add, negative to remove
+    change: number
 ): [Book[] | null, string] {
     const bookIndex = books.findIndex(book => book.id === bookId);
     if (bookIndex === -1) {

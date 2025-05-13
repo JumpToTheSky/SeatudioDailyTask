@@ -310,6 +310,22 @@ async function handleRemoveBookCopies(rl: readlineInterface.Interface): Promise<
     return true;
 }
 
+async function handleDisplayBooks(): Promise<boolean> {
+    if (!dataLoaded) {
+        await loadAllData();
+    }
+    displayBooks(allBooks);
+    return true;
+}
+
+async function handleDisplayUsers(): Promise<boolean> {
+    if (!dataLoaded) {
+        await loadAllData();
+    }
+    displayUsers(allUsers);
+    return true;
+}
+
 function displayMenu(rl: readlineInterface.Interface): boolean {
     console.log("\nLibrary Management System");
     console.log("1. Display list of books");
@@ -328,13 +344,11 @@ function displayMenu(rl: readlineInterface.Interface): boolean {
     rl.question("Enter your choice (1-13): ", async (choice: string) => {
         switch (choice) {
             case "1":
-                if (!dataLoaded) await loadAllData();
-                displayBooks(allBooks);
+                await handleDisplayBooks();
                 displayMenu(rl);
                 break;
             case "2":
-                if (!dataLoaded) await loadAllData();
-                displayUsers(allUsers);
+                await handleDisplayUsers();
                 displayMenu(rl);
                 break;
             case "3":

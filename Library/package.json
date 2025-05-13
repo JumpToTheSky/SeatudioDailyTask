@@ -15,5 +15,8 @@
     "@types/node": "^22.15.17",
     "live-server": "^1.2.0",
     "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "cli-table3": "^0.6.5"
   }
 }

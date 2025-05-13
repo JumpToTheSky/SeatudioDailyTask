@@ -8,6 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.displayBooks = displayBooks;
 exports.fetchBooks = fetchBooks;
@@ -15,15 +18,25 @@ exports.saveBooks = saveBooks;
 exports.removeBookCompletely = removeBookCompletely;
 exports.updateBookCopies = updateBookCopies;
 const module_1 = require("./module");
+const cli_table3_1 = __importDefault(require("cli-table3"));
 function displayBooks(books) {
-    console.log("\nList of Books:");
-    books.forEach(book => {
-        console.log(`- ${book.title} by ${book.author} (${book.published_year})`);
-        console.log(`  Genre: ${book.genre}`);
-        console.log(`  Description: ${book.description}`);
-        console.log(`  Copies Available: ${book.copies}`);
-        console.log("--------------------------------------------------");
+    const table = new cli_table3_1.default({
+        head: ['ID', 'Title', 'Author', 'Year', 'Genre', 'Copies'],
+        colWidths: [5, 30, 20, 10, 15, 10],
+        style: { head: ['white'] },
     });
+    books.forEach(book => {
+        table.push([
+            book.id,
+            book.title,
+            book.author,
+            book.published_year,
+            book.genre,
+            book.copies,
+        ]);
+    });
+    console.log("\nList of Books:");
+    console.log(table.toString());
     return true;
 }
 function fetchBooks() {
@@ -61,8 +74,7 @@ function removeBookCompletely(books, borrowedRecords, bookIdToRemove) {
         `Book ID ${bookIdToRemove} removed. ${borrowedRecordsRemovedCount} borrow record(s) associated with this book also removed.`
     ];
 }
-function updateBookCopies(books, bookId, change // positive to add, negative to remove
-) {
+function updateBookCopies(books, bookId, change) {
     const bookIndex = books.findIndex(book => book.id === bookId);
     if (bookIndex === -1) {
         return [null, `Book with ID ${bookId} not found.`];

@@ -335,6 +335,24 @@ function handleRemoveBookCopies(rl) {
         return true;
     });
 }
+function handleDisplayBooks() {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!dataLoaded) {
+            yield loadAllData();
+        }
+        (0, books_1.displayBooks)(allBooks);
+        return true;
+    });
+}
+function handleDisplayUsers() {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!dataLoaded) {
+            yield loadAllData();
+        }
+        (0, users_1.displayUsers)(allUsers);
+        return true;
+    });
+}
 function displayMenu(rl) {
     console.log("\nLibrary Management System");
     console.log("1. Display list of books");
@@ -353,15 +371,11 @@ function displayMenu(rl) {
     rl.question("Enter your choice (1-13): ", (choice) => __awaiter(this, void 0, void 0, function* () {
         switch (choice) {
             case "1":
-                if (!dataLoaded)
-                    yield loadAllData();
-                (0, books_1.displayBooks)(allBooks);
+                yield handleDisplayBooks();
                 displayMenu(rl);
                 break;
             case "2":
-                if (!dataLoaded)
-                    yield loadAllData();
-                (0, users_1.displayUsers)(allUsers);
+                yield handleDisplayUsers();
                 displayMenu(rl);
                 break;
             case "3":
