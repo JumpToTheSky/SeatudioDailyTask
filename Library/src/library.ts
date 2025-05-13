@@ -2,6 +2,7 @@ import { fetchBooks, displayBooks, Book, saveBooks, removeBookCompletely, update
 import { fetchUsers, displayUsers, User, addUser, removeUser, saveUsers, BorrowedBook } from './users';
 import { borrowBook, returnBook, fetchBorrowedBooks, saveBorrowedBooks } from './module';
 import * as readlineInterface from 'readline';
+import Table from 'cli-table3';
 
 let allBooks: Book[] = [];
 let allUsers: User[] = [];
@@ -156,32 +157,7 @@ async function handleCheckOverdueBorrows(rl: readlineInterface.Interface): Promi
     if (!dataLoaded) {
         await loadAllData();
     }
-    console.log("\n--- Users with Overdue Books (Not returned after 1 week) ---");
-    const today = new Date();
-    let foundOverdue = false;
-
-    allBorrowedBookRecords.forEach(record => {
-        if (!record.return_date) { // Book not yet returned
-            const borrowDate = new Date(record.borrow_date);
-            const timeDifference = today.getTime() - borrowDate.getTime();
-
-            if (timeDifference > ONE_WEEK_IN_MILLISECONDS) {
-                const user = allUsers.find(u => u.user_id === record.user_id);
-                const book = allBooks.find(b => b.id === record.book_id);
-                console.log(`- User: ${user ? user.name : 'Unknown User'} (ID: ${record.user_id})`);
-                console.log(`  Book: ${book ? book.title : 'Unknown Book'} (ID: ${record.book_id})`);
-                console.log(`  Borrowed on: ${record.borrow_date}`);
-                const daysOverdue = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-                console.log(`  Days since borrowed: ${daysOverdue} (Overdue by ${daysOverdue - 7} days)`);
-                console.log("--------------------------------------------------");
-                foundOverdue = true;
-            }
-        }
-    });
-
-    if (!foundOverdue) {
-        console.log("No overdue books found.");
-    }
+    displayOverdueRecords(allBorrowedBookRecords, allUsers, allBooks);
     displayMenu(rl);
     return true;
 }
@@ -190,32 +166,7 @@ async function handleCheckLateReturns(rl: readlineInterface.Interface): Promise<
     if (!dataLoaded) {
         await loadAllData();
     }
-    console.log("\n--- Users with Late Returns (Returned after 1 week) ---");
-    let foundLateReturn = false;
-
-    allBorrowedBookRecords.forEach(record => {
-        if (record.return_date) { // Book has been returned
-            const borrowDate = new Date(record.borrow_date);
-            const returnDate = new Date(record.return_date);
-            const timeDifference = returnDate.getTime() - borrowDate.getTime();
-
-            if (timeDifference > ONE_WEEK_IN_MILLISECONDS) {
-                const user = allUsers.find(u => u.user_id === record.user_id);
-                const book = allBooks.find(b => b.id === record.book_id);
-                console.log(`- User: ${user ? user.name : 'Unknown User'} (ID: ${record.user_id})`);
-                console.log(`  Book: ${book ? book.title : 'Unknown Book'} (ID: ${record.book_id})`);
-                console.log(`  Borrowed on: ${record.borrow_date}, Returned on: ${record.return_date}`);
-                const durationDays = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-                console.log(`  Borrow duration: ${durationDays} days (Returned ${durationDays - 7} days late)`);
-                console.log("--------------------------------------------------");
-                foundLateReturn = true;
-            }
-        }
-    });
-
-    if (!foundLateReturn) {
-        console.log("No late returns found (where borrow duration exceeded 1 week).");
-    }
+    displayLateReturns(allBorrowedBookRecords, allUsers, allBooks);
     displayMenu(rl);
     return true;
 }
@@ -326,6 +277,92 @@ async function handleDisplayUsers(): Promise<boolean> {
     return true;
 }
 
+function displayBorrowedRecords(records: BorrowedBook[], users: User[], books: Book[]): void {
+    const table = new Table({
+        head: ['User Name', 'Book Title', 'Borrow Date', 'Return Date'],
+        colWidths: [20, 30, 15, 15],
+        style: { head: ['black', 'bgWhite'] },
+        wordWrap: true, // Enable word wrapping
+    });
+
+    records.forEach(record => {
+        const user = users.find(u => u.user_id === record.user_id);
+        const book = books.find(b => b.id === record.book_id);
+        table.push([
+            user ? user.name : 'Unknown',
+            book ? book.title : 'Unknown',
+            record.borrow_date,
+            record.return_date || 'Not yet',
+        ]);
+    });
+
+    console.log("\nAll Borrowed Book Records:");
+    console.log(table.toString());
+}
+
+function displayOverdueRecords(records: BorrowedBook[], users: User[], books: Book[]): void {
+    const table = new Table({
+        head: ['User Name', 'Book Title', 'Borrow Date', 'Days Overdue'],
+        colWidths: [20, 30, 15, 15],
+        style: { head: ['black', 'bgWhite'] },
+        wordWrap: true, // Enable word wrapping
+    });
+
+    const today = new Date();
+    records.forEach(record => {
+        if (!record.return_date) {
+            const borrowDate = new Date(record.borrow_date);
+            const timeDifference = today.getTime() - borrowDate.getTime();
+            if (timeDifference > ONE_WEEK_IN_MILLISECONDS) {
+                const user = users.find(u => u.user_id === record.user_id);
+                const book = books.find(b => b.id === record.book_id);
+                const daysOverdue = Math.floor(timeDifference / (1000 * 60 * 60 * 24)) - 7;
+                table.push([
+                    user ? user.name : 'Unknown',
+                    book ? book.title : 'Unknown',
+                    record.borrow_date,
+                    daysOverdue,
+                ]);
+            }
+        }
+    });
+
+    console.log("\n--- Users with Overdue Books (Not returned after 1 week) ---");
+    console.log(table.toString());
+}
+
+function displayLateReturns(records: BorrowedBook[], users: User[], books: Book[]): void {
+    const table = new Table({
+        head: ['User Name', 'Book Title', 'Borrow Date', 'Return Date', 'Days Late'],
+        colWidths: [20, 30, 15, 15, 15],
+        style: { head: ['black', 'bgWhite'] },
+        wordWrap: true, // Enable word wrapping
+    });
+
+    records.forEach(record => {
+        if (record.return_date) {
+            const borrowDate = new Date(record.borrow_date);
+            const returnDate = new Date(record.return_date);
+            const timeDifference = returnDate.getTime() - borrowDate.getTime();
+            if (timeDifference > ONE_WEEK_IN_MILLISECONDS) {
+                const user = users.find(u => u.user_id === record.user_id);
+                const book = books.find(b => b.id === record.book_id);
+                const daysLate = Math.floor((timeDifference - ONE_WEEK_IN_MILLISECONDS) / (1000 * 60 * 60 * 24));
+                table.push([
+                    user ? user.name : 'Unknown',
+                    book ? book.title : 'Unknown',
+                    record.borrow_date,
+                    record.return_date,
+                    daysLate,
+                ]);
+            }
+        }
+    });
+
+    console.log("\n--- Users with Late Returns (Returned after 1 week) ---");
+    console.log(table.toString());
+}
+
 function displayMenu(rl: readlineInterface.Interface): boolean {
     console.log("\nLibrary Management System");
     console.log("1. Display list of books");
@@ -365,19 +402,18 @@ function displayMenu(rl: readlineInterface.Interface): boolean {
                 break;
             case "7":
                 if (!dataLoaded) await loadAllData();
-                console.log("\nAll Borrowed Book Records:");
-                allBorrowedBookRecords.forEach(b => {
-                    const user = allUsers.find(u => u.user_id === b.user_id);
-                    const book = allBooks.find(bk => bk.id === b.book_id);
-                    console.log(`- User: ${user ? user.name : 'Unknown'}, Book: ${book ? book.title : 'Unknown'}, Borrowed: ${b.borrow_date}, Returned: ${b.return_date || 'Not yet'}`);
-                });
+                displayBorrowedRecords(allBorrowedBookRecords, allUsers, allBooks);
                 displayMenu(rl);
                 break;
             case "8":
-                await handleCheckOverdueBorrows(rl);
+                if (!dataLoaded) await loadAllData();
+                displayOverdueRecords(allBorrowedBookRecords, allUsers, allBooks);
+                displayMenu(rl);
                 break;
             case "9":
-                await handleCheckLateReturns(rl);
+                if (!dataLoaded) await loadAllData();
+                displayLateReturns(allBorrowedBookRecords, allUsers, allBooks);
+                displayMenu(rl);
                 break;
             case "10":
                 await handleRemoveBook(rl);
