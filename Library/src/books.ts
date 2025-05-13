@@ -1,4 +1,4 @@
-import { loadDataFromJSON } from './utils';
+import { loadDataFromJSON, saveDataToJSON } from './module';
 
 export interface Book {
     id: number;
@@ -26,4 +26,13 @@ export function displayBooks(books: Book[]) {
 export async function fetchBooks(): Promise<Book[]> {
     const books = await loadDataFromJSON<Book>('../library_book.json');
     return books;
+}
+
+export async function saveBooks(books: Book[]): Promise<void> {
+    try {
+        await saveDataToJSON<Book>('../library_book.json', books);
+        console.log("Book data saved successfully.");
+    } catch (error) {
+        console.error("Failed to save book data:", error);
+    }
 }
