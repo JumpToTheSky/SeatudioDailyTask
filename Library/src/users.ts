@@ -2,8 +2,9 @@ import { loadDataFromJSON, saveDataToJSON } from './module';
 
 export interface BorrowedBook {
     book_id: number;
+    user_id: number;
     borrow_date: string;
-    return_date: string;
+    return_date?: string;
 }
 
 export interface User {
@@ -12,19 +13,14 @@ export interface User {
     email: string;
     phone: string;
     address: string;
-    borrowed_books: BorrowedBook[];
 }
 
 export function displayUsers(users: User[]) {
     console.log("\nList of Users:");
     users.forEach(user => {
-        console.log(`- ${user.name} (${user.email})`);
+        console.log(`- ${user.name} (${user.email}) [ID: ${user.user_id}]`);
         console.log(`  Phone: ${user.phone}`);
         console.log(`  Address: ${user.address}`);
-        console.log("  Borrowed Books:");
-        user.borrowed_books.forEach(b => {
-            console.log(`    - Book ID: ${b.book_id} (Borrow: ${b.borrow_date}, Return: ${b.return_date})`);
-        });
         console.log("--------------------------------------------------");
     });
 }
@@ -34,12 +30,11 @@ export async function fetchUsers(): Promise<User[]> {
     return users;
 }
 
-export function addUser(users: User[], newUserDetails: Omit<User, 'user_id' | 'borrowed_books'>): User[] {
+export function addUser(users: User[], newUserDetails: Omit<User, 'user_id'>): User[] {
     const maxId = users.reduce((max, user) => (user.user_id > max ? user.user_id : max), 0);
     const newUser: User = {
         ...newUserDetails,
         user_id: maxId + 1,
-        borrowed_books: [],
     };
     return [...users, newUser];
 }
