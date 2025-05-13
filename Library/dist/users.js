@@ -23,7 +23,7 @@ function displayUsers(users) {
     const table = new cli_table3_1.default({
         head: ['ID', 'Name', 'Email', 'Phone', 'Address'],
         colWidths: [5, 20, 30, 15, 30],
-        style: { head: ['white'] },
+        style: { head: ['black', 'bgWhite'] },
     });
     users.forEach(user => {
         table.push([
