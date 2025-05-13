@@ -1,4 +1,5 @@
 import { loadDataFromJSON, saveDataToJSON } from './module';
+import Table from 'cli-table3';
 
 export interface BorrowedBook {
     book_id: number;
@@ -15,14 +16,26 @@ export interface User {
     address: string;
 }
 
-export function displayUsers(users: User[]) {
-    console.log("\nList of Users:");
-    users.forEach(user => {
-        console.log(`- ${user.name} (${user.email}) [ID: ${user.user_id}]`);
-        console.log(`  Phone: ${user.phone}`);
-        console.log(`  Address: ${user.address}`);
-        console.log("--------------------------------------------------");
+export function displayUsers(users: User[]): boolean {
+    const table = new Table({
+        head: ['ID', 'Name', 'Email', 'Phone', 'Address'],
+        colWidths: [5, 20, 30, 15, 30],
+        style: { head: ['black', 'bgWhite'] }, 
     });
+
+    users.forEach(user => {
+        table.push([
+            user.user_id,
+            user.name,
+            user.email,
+            user.phone,
+            user.address,
+        ]);
+    });
+
+    console.log("\nList of Users:");
+    console.log(table.toString());
+    return true;
 }
 
 export async function fetchUsers(): Promise<User[]> {
@@ -46,11 +59,13 @@ export function removeUser(users: User[], userIdToRemove: number): [User[], bool
     return [updatedUsers, userWasRemoved];
 }
 
-export async function saveUsers(users: User[]): Promise<void> {
+export async function saveUsers(users: User[]): Promise<boolean> {
     try {
         await saveDataToJSON<User>('../library_user.json', users);
         console.log("User data saved successfully.");
+        return true;
     } catch (error) {
         console.error("Failed to save user data:", error);
+        return false;
     }
 }

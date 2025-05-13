@@ -3,6 +3,8 @@ import * as path from 'path';
 import { User, BorrowedBook } from './users';
 import { Book } from './books';
 
+const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
+
 export async function loadDataFromJSON<T>(url: string): Promise<T[]> {
     try {
         const filePath = path.resolve(__dirname, url);
@@ -32,12 +34,14 @@ export async function fetchBorrowedBooks(): Promise<BorrowedBook[]> {
     return borrowedBooks;
 }
 
-export async function saveBorrowedBooks(borrowedBooks: BorrowedBook[]): Promise<void> {
+export async function saveBorrowedBooks(borrowedBooks: BorrowedBook[]): Promise<boolean> {
     try {
         await saveDataToJSON<BorrowedBook>('../borrowed_book.json', borrowedBooks);
         console.log("Borrowed book data saved successfully.");
+        return true;
     } catch (error) {
         console.error("Failed to save borrowed book data:", error);
+        return false;
     }
 }
 
@@ -73,15 +77,18 @@ export function returnBook<BB extends BorrowedBook, B extends Book>(
         return [null, `Active borrow record for Book ID ${bookIdToReturn} by User ID ${userId} not found.`];
     }
 
+    const borrowDate = new Date(allBorrowedBooks[borrowedBookIndex].borrow_date);
+    const returnDate = new Date(); // Current date for return
+
     const updatedBorrowedBooks = allBorrowedBooks.map((borrowedRecord, index) => {
         if (index === borrowedBookIndex) {
             return {
                 ...borrowedRecord,
-                return_date: new Date().toISOString().split('T')[0],
+                return_date: returnDate.toISOString().split('T')[0],
             };
         }
         return borrowedRecord;
-    }) as BB[]; // Cast to BB[] to maintain the generic type
+    }) as BB[]; 
 
     const bookInLibrary = allBooks.find(b => b.id === bookIdToReturn);
     if (bookInLibrary) {
@@ -91,5 +98,15 @@ export function returnBook<BB extends BorrowedBook, B extends Book>(
         return [updatedBorrowedBooks, `Book ID ${bookIdToReturn} returned, but book not found in library to update count.`];
     }
 
-    return [updatedBorrowedBooks, `Book ID ${bookIdToReturn} returned successfully by User ID ${userId}. Remember to save all changes.`];
+    let successMessage = `Book ID ${bookIdToReturn} returned successfully by User ID ${userId}.`;
+    const timeDifference = returnDate.getTime() - borrowDate.getTime();
+
+    if (timeDifference > ONE_WEEK_IN_MILLISECONDS) {
+        const daysLate = Math.floor((timeDifference - ONE_WEEK_IN_MILLISECONDS) / (1000 * 60 * 60 * 24));
+        successMessage += ` The book was returned ${daysLate > 0 ? daysLate : 'several'} day(s) late.`;
+    }
+    
+    successMessage += " Remember to save all changes.";
+
+    return [updatedBorrowedBooks, successMessage];
 }
