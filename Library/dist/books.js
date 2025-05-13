@@ -24,9 +24,21 @@ const cli_table3_1 = __importDefault(require("cli-table3"));
 function displayBooks(books) {
     const table = new cli_table3_1.default({
         head: ['ID', 'Title', 'Author', 'Year', 'Genre', 'Copies'],
-        colWidths: [5, 30, 20, 10, 15, 10],
-        style: { head: ['black', 'bgWhite'] },
-        wordWrap: true, // Enable word wrapping
+        colWidths: [5, 32, 22, 8, 17, 8], // Adjusted for book data + padding
+        wordWrap: true,
+        chars: {
+            'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗',
+            'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝',
+            'left': '║', 'left-mid': '╟', 'mid': '─', 'mid-mid': '┼',
+            'right': '║', 'right-mid': '╢', 'middle': '│'
+        },
+        style: {
+            head: ['cyan', 'bold'],
+            border: ['grey'],
+            'padding-left': 1,
+            'padding-right': 1
+        },
+        colAligns: ['center', 'left', 'left', 'center', 'left', 'center'] // Adjusted for book data
     });
     books.forEach(book => {
         table.push([
@@ -38,7 +50,9 @@ function displayBooks(books) {
             book.copies,
         ]);
     });
-    console.log("\nList of Books:");
+    console.log("\n╔══════════════════╗");
+    console.log("║  LIST OF BOOKS   ║");
+    console.log("╚══════════════════╝");
     console.log(table.toString());
     return true;
 }

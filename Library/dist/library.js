@@ -363,9 +363,21 @@ function handleDisplayUsers() {
 function displayBorrowedRecords(records, users, books) {
     const table = new cli_table3_1.default({
         head: ['User Name', 'Book Title', 'Borrow Date', 'Return Date'],
-        colWidths: [20, 30, 15, 15],
-        style: { head: ['black', 'bgWhite'] },
-        wordWrap: true, // Enable word wrapping
+        colWidths: [22, 32, 17, 17],
+        wordWrap: true,
+        chars: {
+            'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗',
+            'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝',
+            'left': '║', 'left-mid': '╟', 'mid': '─', 'mid-mid': '┼',
+            'right': '║', 'right-mid': '╢', 'middle': '│'
+        },
+        style: {
+            head: ['cyan', 'bold'],
+            border: ['grey'],
+            'padding-left': 1,
+            'padding-right': 1
+        },
+        colAligns: ['left', 'left', 'center', 'center']
     });
     records.forEach(record => {
         const user = users.find(u => u.user_id === record.user_id);
@@ -377,15 +389,29 @@ function displayBorrowedRecords(records, users, books) {
             record.return_date || 'Not yet',
         ]);
     });
-    console.log("\nAll Borrowed Book Records:");
+    console.log("\n╔═════════════════════════════════╗");
+    console.log("║   ALL BORROWED BOOK RECORDS   ║");
+    console.log("╚═════════════════════════════════╝");
     console.log(table.toString());
 }
 function displayOverdueRecords(records, users, books) {
     const table = new cli_table3_1.default({
         head: ['User Name', 'Book Title', 'Borrow Date', 'Days Overdue'],
-        colWidths: [20, 30, 15, 15],
-        style: { head: ['black', 'bgWhite'] },
-        wordWrap: true, // Enable word wrapping
+        colWidths: [22, 32, 17, 17],
+        wordWrap: true,
+        chars: {
+            'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗',
+            'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝',
+            'left': '║', 'left-mid': '╟', 'mid': '─', 'mid-mid': '┼',
+            'right': '║', 'right-mid': '╢', 'middle': '│'
+        },
+        style: {
+            head: ['cyan', 'bold'],
+            border: ['grey'],
+            'padding-left': 1,
+            'padding-right': 1
+        },
+        colAligns: ['left', 'left', 'center', 'center']
     });
     const today = new Date();
     records.forEach(record => {
@@ -405,15 +431,29 @@ function displayOverdueRecords(records, users, books) {
             }
         }
     });
-    console.log("\n--- Users with Overdue Books (Not returned after 1 week) ---");
+    console.log("\n╔═════════════════════════════════════════════════════╗");
+    console.log("║   USERS WITH OVERDUE BOOKS (Not returned after 1 week)   ║");
+    console.log("╚═════════════════════════════════════════════════════╝");
     console.log(table.toString());
 }
 function displayLateReturns(records, users, books) {
     const table = new cli_table3_1.default({
         head: ['User Name', 'Book Title', 'Borrow Date', 'Return Date', 'Days Late'],
-        colWidths: [20, 30, 15, 15, 15],
-        style: { head: ['black', 'bgWhite'] },
-        wordWrap: true, // Enable word wrapping
+        colWidths: [22, 32, 17, 17, 12],
+        wordWrap: true,
+        chars: {
+            'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗',
+            'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝',
+            'left': '║', 'left-mid': '╟', 'mid': '─', 'mid-mid': '┼',
+            'right': '║', 'right-mid': '╢', 'middle': '│'
+        },
+        style: {
+            head: ['cyan', 'bold'],
+            border: ['grey'],
+            'padding-left': 1,
+            'padding-right': 1
+        },
+        colAligns: ['left', 'left', 'center', 'center', 'center']
     });
     records.forEach(record => {
         if (record.return_date) {
@@ -434,7 +474,9 @@ function displayLateReturns(records, users, books) {
             }
         }
     });
-    console.log("\n--- Users with Late Returns (Returned after 1 week) ---");
+    console.log("\n╔═══════════════════════════════════════════════════╗");
+    console.log("║   USERS WITH LATE RETURNS (Returned after 1 week)   ║");
+    console.log("╚═══════════════════════════════════════════════════╝");
     console.log(table.toString());
 }
 function displayMenu(rl) {

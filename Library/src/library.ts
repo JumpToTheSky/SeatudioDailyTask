@@ -326,9 +326,21 @@ async function handleDisplayUsers(): Promise<boolean> {
 function displayBorrowedRecords(records: BorrowedBook[], users: User[], books: Book[]): void {
     const table = new Table({
         head: ['User Name', 'Book Title', 'Borrow Date', 'Return Date'],
-        colWidths: [20, 30, 15, 15],
-        style: { head: ['black', 'bgWhite'] },
-        wordWrap: true, // Enable word wrapping
+        colWidths: [22, 32, 17, 17],
+        wordWrap: true,
+        chars: {
+            'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗',
+            'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝',
+            'left': '║', 'left-mid': '╟', 'mid': '─', 'mid-mid': '┼',
+            'right': '║', 'right-mid': '╢', 'middle': '│'
+        },
+        style: {
+            head: ['cyan', 'bold'],
+            border: ['grey'],
+            'padding-left': 1,
+            'padding-right': 1
+        },
+        colAligns: ['left', 'left', 'center', 'center']
     });
 
     records.forEach(record => {
@@ -342,16 +354,30 @@ function displayBorrowedRecords(records: BorrowedBook[], users: User[], books: B
         ]);
     });
 
-    console.log("\nAll Borrowed Book Records:");
+    console.log("\n╔═════════════════════════════════╗");
+    console.log("║   ALL BORROWED BOOK RECORDS   ║");
+    console.log("╚═════════════════════════════════╝");
     console.log(table.toString());
 }
 
 function displayOverdueRecords(records: BorrowedBook[], users: User[], books: Book[]): void {
     const table = new Table({
         head: ['User Name', 'Book Title', 'Borrow Date', 'Days Overdue'],
-        colWidths: [20, 30, 15, 15],
-        style: { head: ['black', 'bgWhite'] },
-        wordWrap: true, // Enable word wrapping
+        colWidths: [22, 32, 17, 17],
+        wordWrap: true,
+        chars: {
+            'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗',
+            'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝',
+            'left': '║', 'left-mid': '╟', 'mid': '─', 'mid-mid': '┼',
+            'right': '║', 'right-mid': '╢', 'middle': '│'
+        },
+        style: {
+            head: ['cyan', 'bold'],
+            border: ['grey'],
+            'padding-left': 1,
+            'padding-right': 1
+        },
+        colAligns: ['left', 'left', 'center', 'center']
     });
 
     const today = new Date();
@@ -373,16 +399,30 @@ function displayOverdueRecords(records: BorrowedBook[], users: User[], books: Bo
         }
     });
 
-    console.log("\n--- Users with Overdue Books (Not returned after 1 week) ---");
+    console.log("\n╔═════════════════════════════════════════════════════╗");
+    console.log("║   USERS WITH OVERDUE BOOKS (Not returned after 1 week)   ║");
+    console.log("╚═════════════════════════════════════════════════════╝");
     console.log(table.toString());
 }
 
 function displayLateReturns(records: BorrowedBook[], users: User[], books: Book[]): void {
     const table = new Table({
         head: ['User Name', 'Book Title', 'Borrow Date', 'Return Date', 'Days Late'],
-        colWidths: [20, 30, 15, 15, 15],
-        style: { head: ['black', 'bgWhite'] },
-        wordWrap: true, // Enable word wrapping
+        colWidths: [22, 32, 17, 17, 12],
+        wordWrap: true,
+        chars: {
+            'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗',
+            'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝',
+            'left': '║', 'left-mid': '╟', 'mid': '─', 'mid-mid': '┼',
+            'right': '║', 'right-mid': '╢', 'middle': '│'
+        },
+        style: {
+            head: ['cyan', 'bold'],
+            border: ['grey'],
+            'padding-left': 1,
+            'padding-right': 1
+        },
+        colAligns: ['left', 'left', 'center', 'center', 'center']
     });
 
     records.forEach(record => {
@@ -405,7 +445,9 @@ function displayLateReturns(records: BorrowedBook[], users: User[], books: Book[
         }
     });
 
-    console.log("\n--- Users with Late Returns (Returned after 1 week) ---");
+    console.log("\n╔═══════════════════════════════════════════════════╗");
+    console.log("║   USERS WITH LATE RETURNS (Returned after 1 week)   ║");
+    console.log("╚═══════════════════════════════════════════════════╝");
     console.log(table.toString());
 }
 

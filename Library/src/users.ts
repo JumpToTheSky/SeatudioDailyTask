@@ -1,5 +1,3 @@
-// src/users.ts
-
 import { loadDataFromJSON, saveDataToJSON } from './module';
 import Table from 'cli-table3';
 
@@ -19,11 +17,29 @@ export interface User {
 }
 
 export function displayUsers(users: User[]): boolean {
+    if (!users || users.length === 0) {
+        console.log("\nNo users to display.");
+        return false;
+    }
+
     const table = new Table({
         head: ['ID', 'Name', 'Email', 'Phone', 'Address'],
-        colWidths: [5, 20, 30, 15, 30],
-        style: { head: ['black', 'bgWhite'] },
-        wordWrap: true, // Enable word wrapping
+        colWidths: [6, 17, 27, 14, 27],
+        wordWrap: true,
+
+        chars: {
+            'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗',
+            'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝',
+            'left': '║', 'left-mid': '╟', 'mid': '─', 'mid-mid': '┼',
+            'right': '║', 'right-mid': '╢', 'middle': '│'
+        },
+        style: {
+            head: ['cyan', 'bold'],
+            border: ['grey'],
+            'padding-left': 1,
+            'padding-right': 1
+        },
+        colAligns: ['center', 'left', 'left', 'left', 'left']
     });
 
     users.forEach(user => {
@@ -36,13 +52,14 @@ export function displayUsers(users: User[]): boolean {
         ]);
     });
 
-    console.log("\nList of Users:");
+    console.log("\n╔═══════════════════╗");
+    console.log("║   LIST OF USERS   ║");
+    console.log("╚═══════════════════╝");
     console.log(table.toString());
     return true;
 }
 
 export async function fetchUsers(): Promise<User[]> {
-    // Thay đổi đường dẫn ở đây
     const users = await loadDataFromJSON<User>('./data/library_user.json');
     return users;
 }
@@ -65,7 +82,6 @@ export function removeUser(users: User[], userIdToRemove: number): [User[], bool
 
 export async function saveUsers(users: User[]): Promise<boolean> {
     try {
-        // Thay đổi đường dẫn ở đây
         await saveDataToJSON<User>('./data/library_user.json', users);
         console.log("User data saved successfully.");
         return true;
