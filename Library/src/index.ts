@@ -1,4 +1,4 @@
-import { fetchBooks, displayBooks, Book, saveBooks } from './books';
+import { fetchBooks, displayBooks, Book, saveBooks, removeBookCompletely, updateBookCopies } from './books';
 import { fetchUsers, displayUsers, User, addUser, removeUser, saveUsers, BorrowedBook } from './users';
 import { borrowBook, returnBook, fetchBorrowedBooks, saveBorrowedBooks } from './module';
 import * as readlineInterface from 'readline';
@@ -150,6 +150,166 @@ async function handleRemoveUser(rl: readlineInterface.Interface): Promise<boolea
     return true;
 }
 
+const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
+
+async function handleCheckOverdueBorrows(rl: readlineInterface.Interface): Promise<boolean> {
+    if (!dataLoaded) {
+        await loadAllData();
+    }
+    console.log("\n--- Users with Overdue Books (Not returned after 1 week) ---");
+    const today = new Date();
+    let foundOverdue = false;
+
+    allBorrowedBookRecords.forEach(record => {
+        if (!record.return_date) { // Book not yet returned
+            const borrowDate = new Date(record.borrow_date);
+            const timeDifference = today.getTime() - borrowDate.getTime();
+
+            if (timeDifference > ONE_WEEK_IN_MILLISECONDS) {
+                const user = allUsers.find(u => u.user_id === record.user_id);
+                const book = allBooks.find(b => b.id === record.book_id);
+                console.log(`- User: ${user ? user.name : 'Unknown User'} (ID: ${record.user_id})`);
+                console.log(`  Book: ${book ? book.title : 'Unknown Book'} (ID: ${record.book_id})`);
+                console.log(`  Borrowed on: ${record.borrow_date}`);
+                const daysOverdue = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+                console.log(`  Days since borrowed: ${daysOverdue} (Overdue by ${daysOverdue - 7} days)`);
+                console.log("--------------------------------------------------");
+                foundOverdue = true;
+            }
+        }
+    });
+
+    if (!foundOverdue) {
+        console.log("No overdue books found.");
+    }
+    displayMenu(rl);
+    return true;
+}
+
+async function handleCheckLateReturns(rl: readlineInterface.Interface): Promise<boolean> {
+    if (!dataLoaded) {
+        await loadAllData();
+    }
+    console.log("\n--- Users with Late Returns (Returned after 1 week) ---");
+    let foundLateReturn = false;
+
+    allBorrowedBookRecords.forEach(record => {
+        if (record.return_date) { // Book has been returned
+            const borrowDate = new Date(record.borrow_date);
+            const returnDate = new Date(record.return_date);
+            const timeDifference = returnDate.getTime() - borrowDate.getTime();
+
+            if (timeDifference > ONE_WEEK_IN_MILLISECONDS) {
+                const user = allUsers.find(u => u.user_id === record.user_id);
+                const book = allBooks.find(b => b.id === record.book_id);
+                console.log(`- User: ${user ? user.name : 'Unknown User'} (ID: ${record.user_id})`);
+                console.log(`  Book: ${book ? book.title : 'Unknown Book'} (ID: ${record.book_id})`);
+                console.log(`  Borrowed on: ${record.borrow_date}, Returned on: ${record.return_date}`);
+                const durationDays = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+                console.log(`  Borrow duration: ${durationDays} days (Returned ${durationDays - 7} days late)`);
+                console.log("--------------------------------------------------");
+                foundLateReturn = true;
+            }
+        }
+    });
+
+    if (!foundLateReturn) {
+        console.log("No late returns found (where borrow duration exceeded 1 week).");
+    }
+    displayMenu(rl);
+    return true;
+}
+
+async function handleRemoveBook(rl: readlineInterface.Interface): Promise<boolean> {
+    if (!dataLoaded) {
+        await loadAllData();
+    }
+    rl.question("Enter Book ID to remove completely: ", async (bookIdStr: string) => {
+        const bookId = parseInt(bookIdStr);
+        if (isNaN(bookId)) {
+            console.log("Invalid Book ID format.");
+            displayMenu(rl);
+            return true;
+        }
+
+        const [updatedBooks, updatedBorrowedRecords, success, message] = removeBookCompletely(allBooks, allBorrowedBookRecords, bookId);
+        console.log(message);
+
+        if (success) {
+            allBooks = updatedBooks;
+            allBorrowedBookRecords = updatedBorrowedRecords;
+            await saveBooks(allBooks);
+            await saveBorrowedBooks(allBorrowedBookRecords);
+        }
+        displayMenu(rl);
+    });
+    return true;
+}
+
+async function handleAddBookCopies(rl: readlineInterface.Interface): Promise<boolean> {
+    if (!dataLoaded) {
+        await loadAllData();
+    }
+    rl.question("Enter Book ID to add copies to: ", (bookIdStr: string) => {
+        const bookId = parseInt(bookIdStr);
+        if (isNaN(bookId)) {
+            console.log("Invalid Book ID format.");
+            displayMenu(rl);
+            return true;
+        }
+        rl.question("Enter number of copies to add: ", async (copiesStr: string) => {
+            const copiesToAdd = parseInt(copiesStr);
+            if (isNaN(copiesToAdd) || copiesToAdd <= 0) {
+                console.log("Invalid number of copies. Must be a positive number.");
+                displayMenu(rl);
+                return true;
+            }
+
+            const [updatedBooks, message] = updateBookCopies(allBooks, bookId, copiesToAdd);
+            console.log(message);
+
+            if (updatedBooks) {
+                allBooks = updatedBooks;
+                await saveBooks(allBooks);
+            }
+            displayMenu(rl);
+        });
+    });
+    return true;
+}
+
+async function handleRemoveBookCopies(rl: readlineInterface.Interface): Promise<boolean> {
+    if (!dataLoaded) {
+        await loadAllData();
+    }
+    rl.question("Enter Book ID to remove copies from: ", (bookIdStr: string) => {
+        const bookId = parseInt(bookIdStr);
+        if (isNaN(bookId)) {
+            console.log("Invalid Book ID format.");
+            displayMenu(rl);
+            return true;
+        }
+        rl.question("Enter number of copies to remove: ", async (copiesStr: string) => {
+            const copiesToRemove = parseInt(copiesStr);
+            if (isNaN(copiesToRemove) || copiesToRemove <= 0) {
+                console.log("Invalid number of copies. Must be a positive number.");
+                displayMenu(rl);
+                return true;
+            }
+
+            const [updatedBooks, message] = updateBookCopies(allBooks, bookId, -copiesToRemove); // Pass negative value
+            console.log(message);
+
+            if (updatedBooks) {
+                allBooks = updatedBooks;
+                await saveBooks(allBooks);
+            }
+            displayMenu(rl);
+        });
+    });
+    return true;
+}
+
 function displayMenu(rl: readlineInterface.Interface): boolean {
     console.log("\nLibrary Management System");
     console.log("1. Display list of books");
@@ -159,8 +319,13 @@ function displayMenu(rl: readlineInterface.Interface): boolean {
     console.log("5. Add a new user");
     console.log("6. Remove a user");
     console.log("7. Display all borrowed book records");
-    console.log("8. Exit");
-    rl.question("Enter your choice (1-8): ", async (choice: string) => {
+    console.log("8. Check Overdue Borrows (Not returned > 1 week)");
+    console.log("9. Check Late Returns (Returned > 1 week)");
+    console.log("10. Remove a Book from Library");
+    console.log("11. Add Copies to a Book");
+    console.log("12. Remove Copies from a Book");
+    console.log("13. Exit");
+    rl.question("Enter your choice (1-13): ", async (choice: string) => {
         switch (choice) {
             case "1":
                 if (!dataLoaded) await loadAllData();
@@ -195,6 +360,21 @@ function displayMenu(rl: readlineInterface.Interface): boolean {
                 displayMenu(rl);
                 break;
             case "8":
+                await handleCheckOverdueBorrows(rl);
+                break;
+            case "9":
+                await handleCheckLateReturns(rl);
+                break;
+            case "10":
+                await handleRemoveBook(rl);
+                break;
+            case "11":
+                await handleAddBookCopies(rl);
+                break;
+            case "12":
+                await handleRemoveBookCopies(rl);
+                break;
+            case "13":
                 console.log("Exiting...");
                 rl.close();
                 break;
