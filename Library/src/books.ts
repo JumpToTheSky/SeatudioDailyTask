@@ -8,7 +8,7 @@ export interface Book {
     id: number;
     title: string;
     author: string;
-    genre: string;
+    genre: string[]; // Changed from string to string[]
     published_year: number;
     cover_image: string;
     edition_count: number;
@@ -42,7 +42,7 @@ export function displayBooks(books: Book[]): boolean {
             book.title,
             book.author,
             book.published_year,
-            book.genre,
+            book.genre.join(', '), // Join array for display
             book.copies,
         ]);
     });
@@ -131,4 +131,54 @@ export function updateBookCopies(
         message += `decreased by ${Math.abs(change)}. New total: ${newCopies}.`;
     }
     return [updatedBooks, message];
+}
+
+export function getAllUniqueGenres(books: Book[]): string[] {
+    const allGenres = new Set<string>();
+    books.forEach(book => {
+        book.genre.forEach(g => allGenres.add(g));
+    });
+    return Array.from(allGenres).sort();
+}
+
+export function displayUniqueGenres(genres: string[]): void {
+    if (genres.length === 0) {
+        console.log("No genres found in the library.");
+    } else {
+        console.log("\n╔═══════════════════╗");
+        console.log("║  ALL GENRES LIST  ║");
+        console.log("╚═══════════════════╝");
+        const genresTable = new Table({
+            head: ['Available Genres'],
+            colWidths: [30],
+            chars: {
+                'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗',
+                'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝',
+                'left': '║', 'left-mid': '╟', 'mid': '─', 'mid-mid': '┼',
+                'right': '║', 'right-mid': '╢', 'middle': '│'
+            },
+            style: {
+                head: ['cyan', 'bold'],
+                border: ['grey'],
+                'padding-left': 1,
+                'padding-right': 1
+            }
+        });
+        genres.forEach(genre => genresTable.push([genre]));
+        console.log(genresTable.toString());
+    }
+}
+
+export function searchBooksByTitleLogic(books: Book[], searchTerm: string): Book[] {
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+    return books.filter(book => 
+        book.title.toLowerCase().includes(lowerCaseSearchTerm)
+    );
+}
+
+export function searchBooksByGenreLogic(books: Book[], searchTerm: string): Book[] {
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+    return books.filter(book => 
+        book.genre.some(g => g.toLowerCase().includes(lowerCaseSearchTerm))
+    );
 }

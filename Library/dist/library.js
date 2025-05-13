@@ -302,7 +302,13 @@ function handleAddBook(rl) {
         }
         rl.question("Enter book title: ", (title) => {
             rl.question("Enter book author: ", (author) => {
-                rl.question("Enter book genre: ", (genre) => {
+                rl.question("Enter book genre(s) (comma-separated): ", (genreStr) => {
+                    const genre = genreStr.split(',').map(g => g.trim()).filter(g => g.length > 0);
+                    if (genre.length === 0) {
+                        console.log("Invalid genre(s). At least one genre must be provided.");
+                        displayMenu(rl);
+                        return true;
+                    }
                     rl.question("Enter published year: ", (publishedYearStr) => {
                         const published_year = parseInt(publishedYearStr);
                         if (isNaN(published_year)) {
@@ -479,6 +485,55 @@ function displayLateReturns(records, users, books) {
     console.log("╚═══════════════════════════════════════════════════╝");
     console.log(table.toString());
 }
+function handleDisplayAllGenres(rl) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!dataLoaded) {
+            yield loadAllData();
+        }
+        const uniqueGenres = (0, books_1.getAllUniqueGenres)(allBooks);
+        (0, books_1.displayUniqueGenres)(uniqueGenres);
+        displayMenu(rl);
+        return true;
+    });
+}
+function handleSearchBooksByTitle(rl) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!dataLoaded) {
+            yield loadAllData();
+        }
+        rl.question("Enter title to search: ", (searchTerm) => {
+            const foundBooks = (0, books_1.searchBooksByTitleLogic)(allBooks, searchTerm);
+            if (foundBooks.length > 0) {
+                console.log(`\nFound ${foundBooks.length} book(s) matching "${searchTerm}":`);
+                (0, books_1.displayBooks)(foundBooks);
+            }
+            else {
+                console.log(`No books found matching "${searchTerm}".`);
+            }
+            displayMenu(rl);
+        });
+        return true;
+    });
+}
+function handleSearchBooksByGenre(rl) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!dataLoaded) {
+            yield loadAllData();
+        }
+        rl.question("Enter genre to search: ", (searchTerm) => {
+            const foundBooks = (0, books_1.searchBooksByGenreLogic)(allBooks, searchTerm);
+            if (foundBooks.length > 0) {
+                console.log(`\nFound ${foundBooks.length} book(s) in genre "${searchTerm}":`);
+                (0, books_1.displayBooks)(foundBooks);
+            }
+            else {
+                console.log(`No books found in genre "${searchTerm}".`);
+            }
+            displayMenu(rl);
+        });
+        return true;
+    });
+}
 function displayMenu(rl) {
     console.log("\nLibrary Management System");
     console.log("1. Display list of books");
@@ -494,8 +549,11 @@ function displayMenu(rl) {
     console.log("11. Remove a Book from Library");
     console.log("12. Add Copies to a Book");
     console.log("13. Remove Copies from a Book");
-    console.log("14. Exit");
-    rl.question("Enter your choice (1-14): ", (choice) => __awaiter(this, void 0, void 0, function* () {
+    console.log("14. Display all genres");
+    console.log("15. Search books by title");
+    console.log("16. Search books by genre");
+    console.log("17. Exit");
+    rl.question("Enter your choice (1-17): ", (choice) => __awaiter(this, void 0, void 0, function* () {
         switch (choice) {
             case "1":
                 yield handleDisplayBooks();
@@ -548,6 +606,15 @@ function displayMenu(rl) {
                 yield handleRemoveBookCopies(rl);
                 break;
             case "14":
+                yield handleDisplayAllGenres(rl);
+                break;
+            case "15":
+                yield handleSearchBooksByTitle(rl);
+                break;
+            case "16":
+                yield handleSearchBooksByGenre(rl);
+                break;
+            case "17":
                 console.log("Exiting...");
                 rl.close();
                 break;

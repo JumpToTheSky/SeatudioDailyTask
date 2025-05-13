@@ -1,4 +1,4 @@
-import { fetchBooks, displayBooks, Book, saveBooks, removeBookCompletely, updateBookCopies, addBook } from './books';
+import { fetchBooks, displayBooks, Book, saveBooks, removeBookCompletely, updateBookCopies, addBook, getAllUniqueGenres, displayUniqueGenres, searchBooksByTitleLogic, searchBooksByGenreLogic } from './books';
 import { fetchUsers, displayUsers, User, addUser, removeUser, saveUsers, BorrowedBook } from './users';
 import { borrowBook, returnBook, fetchBorrowedBooks, saveBorrowedBooks } from './module';
 import * as readlineInterface from 'readline';
@@ -267,7 +267,13 @@ async function handleAddBook(rl: readlineInterface.Interface): Promise<boolean> 
     }
     rl.question("Enter book title: ", (title: string) => {
         rl.question("Enter book author: ", (author: string) => {
-            rl.question("Enter book genre: ", (genre: string) => {
+            rl.question("Enter book genre(s) (comma-separated): ", (genreStr: string) => {
+                const genre = genreStr.split(',').map(g => g.trim()).filter(g => g.length > 0);
+                if (genre.length === 0) {
+                    console.log("Invalid genre(s). At least one genre must be provided.");
+                    displayMenu(rl);
+                    return true;
+                }
                 rl.question("Enter published year: ", (publishedYearStr: string) => {
                     const published_year = parseInt(publishedYearStr);
                     if (isNaN(published_year)) {
@@ -451,6 +457,52 @@ function displayLateReturns(records: BorrowedBook[], users: User[], books: Book[
     console.log(table.toString());
 }
 
+async function handleDisplayAllGenres(rl: readlineInterface.Interface): Promise<boolean> {
+    if (!dataLoaded) {
+        await loadAllData();
+    }
+    const uniqueGenres = getAllUniqueGenres(allBooks);
+    displayUniqueGenres(uniqueGenres);
+    displayMenu(rl);
+    return true;
+}
+
+async function handleSearchBooksByTitle(rl: readlineInterface.Interface): Promise<boolean> {
+    if (!dataLoaded) {
+        await loadAllData();
+    }
+    rl.question("Enter title to search: ", (searchTerm: string) => {
+        const foundBooks = searchBooksByTitleLogic(allBooks, searchTerm);
+
+        if (foundBooks.length > 0) {
+            console.log(`\nFound ${foundBooks.length} book(s) matching "${searchTerm}":`);
+            displayBooks(foundBooks);
+        } else {
+            console.log(`No books found matching "${searchTerm}".`);
+        }
+        displayMenu(rl);
+    });
+    return true;
+}
+
+async function handleSearchBooksByGenre(rl: readlineInterface.Interface): Promise<boolean> {
+    if (!dataLoaded) {
+        await loadAllData();
+    }
+    rl.question("Enter genre to search: ", (searchTerm: string) => {
+        const foundBooks = searchBooksByGenreLogic(allBooks, searchTerm);
+
+        if (foundBooks.length > 0) {
+            console.log(`\nFound ${foundBooks.length} book(s) in genre "${searchTerm}":`);
+            displayBooks(foundBooks);
+        } else {
+            console.log(`No books found in genre "${searchTerm}".`);
+        }
+        displayMenu(rl);
+    });
+    return true;
+}
+
 function displayMenu(rl: readlineInterface.Interface): boolean {
     console.log("\nLibrary Management System");
     console.log("1. Display list of books");
@@ -466,8 +518,11 @@ function displayMenu(rl: readlineInterface.Interface): boolean {
     console.log("11. Remove a Book from Library");
     console.log("12. Add Copies to a Book");
     console.log("13. Remove Copies from a Book");
-    console.log("14. Exit");
-    rl.question("Enter your choice (1-14): ", async (choice: string) => {
+    console.log("14. Display all genres");
+    console.log("15. Search books by title");
+    console.log("16. Search books by genre");
+    console.log("17. Exit");
+    rl.question("Enter your choice (1-17): ", async (choice: string) => {
         switch (choice) {
             case "1":
                 await handleDisplayBooks();
@@ -517,6 +572,15 @@ function displayMenu(rl: readlineInterface.Interface): boolean {
                 await handleRemoveBookCopies(rl);
                 break;
             case "14":
+                await handleDisplayAllGenres(rl);
+                break;
+            case "15":
+                await handleSearchBooksByTitle(rl);
+                break;
+            case "16":
+                await handleSearchBooksByGenre(rl);
+                break;
+            case "17":
                 console.log("Exiting...");
                 rl.close();
                 break;

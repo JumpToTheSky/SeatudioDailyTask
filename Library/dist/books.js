@@ -19,6 +19,10 @@ exports.saveBooks = saveBooks;
 exports.addBook = addBook;
 exports.removeBookCompletely = removeBookCompletely;
 exports.updateBookCopies = updateBookCopies;
+exports.getAllUniqueGenres = getAllUniqueGenres;
+exports.displayUniqueGenres = displayUniqueGenres;
+exports.searchBooksByTitleLogic = searchBooksByTitleLogic;
+exports.searchBooksByGenreLogic = searchBooksByGenreLogic;
 const module_1 = require("./module");
 const cli_table3_1 = __importDefault(require("cli-table3"));
 function displayBooks(books) {
@@ -46,7 +50,7 @@ function displayBooks(books) {
             book.title,
             book.author,
             book.published_year,
-            book.genre,
+            book.genre.join(', '), // Join array for display
             book.copies,
         ]);
     });
@@ -117,4 +121,47 @@ function updateBookCopies(books, bookId, change) {
         message += `decreased by ${Math.abs(change)}. New total: ${newCopies}.`;
     }
     return [updatedBooks, message];
+}
+function getAllUniqueGenres(books) {
+    const allGenres = new Set();
+    books.forEach(book => {
+        book.genre.forEach(g => allGenres.add(g));
+    });
+    return Array.from(allGenres).sort();
+}
+function displayUniqueGenres(genres) {
+    if (genres.length === 0) {
+        console.log("No genres found in the library.");
+    }
+    else {
+        console.log("\n╔═══════════════════╗");
+        console.log("║  ALL GENRES LIST  ║");
+        console.log("╚═══════════════════╝");
+        const genresTable = new cli_table3_1.default({
+            head: ['Available Genres'],
+            colWidths: [30],
+            chars: {
+                'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗',
+                'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝',
+                'left': '║', 'left-mid': '╟', 'mid': '─', 'mid-mid': '┼',
+                'right': '║', 'right-mid': '╢', 'middle': '│'
+            },
+            style: {
+                head: ['cyan', 'bold'],
+                border: ['grey'],
+                'padding-left': 1,
+                'padding-right': 1
+            }
+        });
+        genres.forEach(genre => genresTable.push([genre]));
+        console.log(genresTable.toString());
+    }
+}
+function searchBooksByTitleLogic(books, searchTerm) {
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+    return books.filter(book => book.title.toLowerCase().includes(lowerCaseSearchTerm));
+}
+function searchBooksByGenreLogic(books, searchTerm) {
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+    return books.filter(book => book.genre.some(g => g.toLowerCase().includes(lowerCaseSearchTerm)));
 }
