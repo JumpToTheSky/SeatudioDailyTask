@@ -20,11 +20,27 @@ exports.saveUsers = saveUsers;
 const module_1 = require("./module");
 const cli_table3_1 = __importDefault(require("cli-table3"));
 function displayUsers(users) {
+    if (!users || users.length === 0) {
+        console.log("\nNo users to display.");
+        return false;
+    }
     const table = new cli_table3_1.default({
         head: ['ID', 'Name', 'Email', 'Phone', 'Address'],
-        colWidths: [5, 20, 30, 15, 30],
-        style: { head: ['black', 'bgWhite'] },
-        wordWrap: true, // Enable word wrapping
+        colWidths: [6, 17, 27, 14, 27],
+        wordWrap: true,
+        chars: {
+            'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗',
+            'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝',
+            'left': '║', 'left-mid': '╟', 'mid': '─', 'mid-mid': '┼',
+            'right': '║', 'right-mid': '╢', 'middle': '│'
+        },
+        style: {
+            head: ['cyan', 'bold'],
+            border: ['grey'],
+            'padding-left': 1,
+            'padding-right': 1
+        },
+        colAligns: ['center', 'left', 'left', 'left', 'left']
     });
     users.forEach(user => {
         table.push([
@@ -35,13 +51,15 @@ function displayUsers(users) {
             user.address,
         ]);
     });
-    console.log("\nList of Users:");
+    console.log("\n╔═══════════════════╗");
+    console.log("║   LIST OF USERS   ║");
+    console.log("╚═══════════════════╝");
     console.log(table.toString());
     return true;
 }
 function fetchUsers() {
     return __awaiter(this, void 0, void 0, function* () {
-        const users = yield (0, module_1.loadDataFromJSON)('../library_user.json');
+        const users = yield (0, module_1.loadDataFromJSON)('./data/library_user.json');
         return users;
     });
 }
@@ -59,7 +77,7 @@ function removeUser(users, userIdToRemove) {
 function saveUsers(users) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield (0, module_1.saveDataToJSON)('../library_user.json', users);
+            yield (0, module_1.saveDataToJSON)('./data/library_user.json', users);
             console.log("User data saved successfully.");
             return true;
         }

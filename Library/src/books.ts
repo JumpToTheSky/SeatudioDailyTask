@@ -1,3 +1,5 @@
+// src/books.ts
+
 import { loadDataFromJSON, saveDataToJSON } from './module';
 import { BorrowedBook } from './users';
 import Table from 'cli-table3';
@@ -17,9 +19,21 @@ export interface Book {
 export function displayBooks(books: Book[]): boolean {
     const table = new Table({
         head: ['ID', 'Title', 'Author', 'Year', 'Genre', 'Copies'],
-        colWidths: [5, 30, 20, 10, 15, 10],
-        style: { head: ['black', 'bgWhite'] },
-        wordWrap: true, // Enable word wrapping
+        colWidths: [5, 32, 22, 8, 17, 8], // Adjusted for book data + padding
+        wordWrap: true, 
+        chars: {
+            'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗',
+            'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝',
+            'left': '║', 'left-mid': '╟', 'mid': '─', 'mid-mid': '┼',
+            'right': '║', 'right-mid': '╢', 'middle': '│'
+        },
+        style: {
+            head: ['cyan', 'bold'], 
+            border: ['grey'],       
+            'padding-left': 1,      
+            'padding-right': 1      
+        },
+        colAligns: ['center', 'left', 'left', 'center', 'left', 'center'] // Adjusted for book data
     });
 
     books.forEach(book => {
@@ -33,25 +47,38 @@ export function displayBooks(books: Book[]): boolean {
         ]);
     });
 
-    console.log("\nList of Books:");
+    console.log("\n╔══════════════════╗");
+    console.log("║  LIST OF BOOKS   ║");
+    console.log("╚══════════════════╝");
     console.log(table.toString());
     return true;
 }
 
 export async function fetchBooks(): Promise<Book[]> {
-    const books = await loadDataFromJSON<Book>('../library_book.json');
+    // Thay đổi đường dẫn ở đây
+    const books = await loadDataFromJSON<Book>('./data/library_book.json');
     return books;
 }
 
 export async function saveBooks(books: Book[]): Promise<boolean> {
     try {
-        await saveDataToJSON<Book>('../library_book.json', books);
+        // Thay đổi đường dẫn ở đây
+        await saveDataToJSON<Book>('./data/library_book.json', books);
         console.log("Book data saved successfully.");
         return true;
     } catch (error) {
         console.error("Failed to save book data:", error);
         return false;
     }
+}
+
+export function addBook(books: Book[], newBookDetails: Omit<Book, 'id'>): Book[] {
+    const maxId = books.reduce((max, book) => (book.id > max ? book.id : max), 0);
+    const newBook: Book = {
+        ...newBookDetails,
+        id: maxId + 1,
+    };
+    return [...books, newBook];
 }
 
 export function removeBookCompletely(

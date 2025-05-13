@@ -1,4 +1,4 @@
-import { fetchBooks, displayBooks, Book, saveBooks, removeBookCompletely, updateBookCopies } from './books';
+import { fetchBooks, displayBooks, Book, saveBooks, removeBookCompletely, updateBookCopies, addBook } from './books';
 import { fetchUsers, displayUsers, User, addUser, removeUser, saveUsers, BorrowedBook } from './users';
 import { borrowBook, returnBook, fetchBorrowedBooks, saveBorrowedBooks } from './module';
 import * as readlineInterface from 'readline';
@@ -261,6 +261,52 @@ async function handleRemoveBookCopies(rl: readlineInterface.Interface): Promise<
     return true;
 }
 
+async function handleAddBook(rl: readlineInterface.Interface): Promise<boolean> {
+    if (!dataLoaded) {
+        await loadAllData();
+    }
+    rl.question("Enter book title: ", (title: string) => {
+        rl.question("Enter book author: ", (author: string) => {
+            rl.question("Enter book genre: ", (genre: string) => {
+                rl.question("Enter published year: ", (publishedYearStr: string) => {
+                    const published_year = parseInt(publishedYearStr);
+                    if (isNaN(published_year)) {
+                        console.log("Invalid published year.");
+                        displayMenu(rl);
+                        return true;
+                    }
+                    rl.question("Enter cover image URL: ", (cover_image: string) => {
+                        rl.question("Enter edition count: ", (editionCountStr: string) => {
+                            const edition_count = parseInt(editionCountStr);
+                            if (isNaN(edition_count)) {
+                                console.log("Invalid edition count.");
+                                displayMenu(rl);
+                                return true;
+                            }
+                            rl.question("Enter book description: ", (description: string) => {
+                                rl.question("Enter number of copies: ", async (copiesStr: string) => {
+                                    const copies = parseInt(copiesStr);
+                                    if (isNaN(copies) || copies < 0) {
+                                        console.log("Invalid number of copies.");
+                                        displayMenu(rl);
+                                        return true;
+                                    }
+                                    const newBookDetails = { title, author, genre, published_year, cover_image, edition_count, description, copies };
+                                    allBooks = addBook(allBooks, newBookDetails);
+                                    await saveBooks(allBooks);
+                                    console.log(`Book "${title}" added successfully with ID ${allBooks[allBooks.length - 1].id}.`);
+                                    displayMenu(rl);
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    });
+    return true;
+}
+
 async function handleDisplayBooks(): Promise<boolean> {
     if (!dataLoaded) {
         await loadAllData();
@@ -280,9 +326,21 @@ async function handleDisplayUsers(): Promise<boolean> {
 function displayBorrowedRecords(records: BorrowedBook[], users: User[], books: Book[]): void {
     const table = new Table({
         head: ['User Name', 'Book Title', 'Borrow Date', 'Return Date'],
-        colWidths: [20, 30, 15, 15],
-        style: { head: ['black', 'bgWhite'] },
-        wordWrap: true, // Enable word wrapping
+        colWidths: [22, 32, 17, 17],
+        wordWrap: true,
+        chars: {
+            'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗',
+            'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝',
+            'left': '║', 'left-mid': '╟', 'mid': '─', 'mid-mid': '┼',
+            'right': '║', 'right-mid': '╢', 'middle': '│'
+        },
+        style: {
+            head: ['cyan', 'bold'],
+            border: ['grey'],
+            'padding-left': 1,
+            'padding-right': 1
+        },
+        colAligns: ['left', 'left', 'center', 'center']
     });
 
     records.forEach(record => {
@@ -296,16 +354,30 @@ function displayBorrowedRecords(records: BorrowedBook[], users: User[], books: B
         ]);
     });
 
-    console.log("\nAll Borrowed Book Records:");
+    console.log("\n╔═════════════════════════════════╗");
+    console.log("║   ALL BORROWED BOOK RECORDS   ║");
+    console.log("╚═════════════════════════════════╝");
     console.log(table.toString());
 }
 
 function displayOverdueRecords(records: BorrowedBook[], users: User[], books: Book[]): void {
     const table = new Table({
         head: ['User Name', 'Book Title', 'Borrow Date', 'Days Overdue'],
-        colWidths: [20, 30, 15, 15],
-        style: { head: ['black', 'bgWhite'] },
-        wordWrap: true, // Enable word wrapping
+        colWidths: [22, 32, 17, 17],
+        wordWrap: true,
+        chars: {
+            'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗',
+            'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝',
+            'left': '║', 'left-mid': '╟', 'mid': '─', 'mid-mid': '┼',
+            'right': '║', 'right-mid': '╢', 'middle': '│'
+        },
+        style: {
+            head: ['cyan', 'bold'],
+            border: ['grey'],
+            'padding-left': 1,
+            'padding-right': 1
+        },
+        colAligns: ['left', 'left', 'center', 'center']
     });
 
     const today = new Date();
@@ -327,16 +399,30 @@ function displayOverdueRecords(records: BorrowedBook[], users: User[], books: Bo
         }
     });
 
-    console.log("\n--- Users with Overdue Books (Not returned after 1 week) ---");
+    console.log("\n╔═════════════════════════════════════════════════════╗");
+    console.log("║   USERS WITH OVERDUE BOOKS (Not returned after 1 week)   ║");
+    console.log("╚═════════════════════════════════════════════════════╝");
     console.log(table.toString());
 }
 
 function displayLateReturns(records: BorrowedBook[], users: User[], books: Book[]): void {
     const table = new Table({
         head: ['User Name', 'Book Title', 'Borrow Date', 'Return Date', 'Days Late'],
-        colWidths: [20, 30, 15, 15, 15],
-        style: { head: ['black', 'bgWhite'] },
-        wordWrap: true, // Enable word wrapping
+        colWidths: [22, 32, 17, 17, 12],
+        wordWrap: true,
+        chars: {
+            'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗',
+            'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝',
+            'left': '║', 'left-mid': '╟', 'mid': '─', 'mid-mid': '┼',
+            'right': '║', 'right-mid': '╢', 'middle': '│'
+        },
+        style: {
+            head: ['cyan', 'bold'],
+            border: ['grey'],
+            'padding-left': 1,
+            'padding-right': 1
+        },
+        colAligns: ['left', 'left', 'center', 'center', 'center']
     });
 
     records.forEach(record => {
@@ -359,7 +445,9 @@ function displayLateReturns(records: BorrowedBook[], users: User[], books: Book[
         }
     });
 
-    console.log("\n--- Users with Late Returns (Returned after 1 week) ---");
+    console.log("\n╔═══════════════════════════════════════════════════╗");
+    console.log("║   USERS WITH LATE RETURNS (Returned after 1 week)   ║");
+    console.log("╚═══════════════════════════════════════════════════╝");
     console.log(table.toString());
 }
 
@@ -374,11 +462,12 @@ function displayMenu(rl: readlineInterface.Interface): boolean {
     console.log("7. Display all borrowed book records");
     console.log("8. Check Overdue Borrows (Not returned > 1 week)");
     console.log("9. Check Late Returns (Returned > 1 week)");
-    console.log("10. Remove a Book from Library");
-    console.log("11. Add Copies to a Book");
-    console.log("12. Remove Copies from a Book");
-    console.log("13. Exit");
-    rl.question("Enter your choice (1-13): ", async (choice: string) => {
+    console.log("10. Add a new book");
+    console.log("11. Remove a Book from Library");
+    console.log("12. Add Copies to a Book");
+    console.log("13. Remove Copies from a Book");
+    console.log("14. Exit");
+    rl.question("Enter your choice (1-14): ", async (choice: string) => {
         switch (choice) {
             case "1":
                 await handleDisplayBooks();
@@ -416,15 +505,18 @@ function displayMenu(rl: readlineInterface.Interface): boolean {
                 displayMenu(rl);
                 break;
             case "10":
-                await handleRemoveBook(rl);
+                await handleAddBook(rl);
                 break;
             case "11":
-                await handleAddBookCopies(rl);
+                await handleRemoveBook(rl);
                 break;
             case "12":
-                await handleRemoveBookCopies(rl);
+                await handleAddBookCopies(rl);
                 break;
             case "13":
+                await handleRemoveBookCopies(rl);
+                break;
+            case "14":
                 console.log("Exiting...");
                 rl.close();
                 break;
