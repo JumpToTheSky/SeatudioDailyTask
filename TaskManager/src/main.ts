@@ -8,6 +8,26 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
+function getTableConfig(headers: string[], widths: number[]) {
+    return {
+        head: headers,
+        colWidths: widths,
+        wordWrap: true,
+        chars: {
+            'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗',
+            'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝',
+            'left': '║', 'left-mid': '╟', 'mid': '─', 'mid-mid': '┼',
+            'right': '║', 'right-mid': '╢', 'middle': '│'
+        },
+        style: {
+            head: ['cyan', 'bold'],
+            border: ['grey'],
+            'padding-left': 1,
+            'padding-right': 1
+        }
+    };
+}
+
 function showMenu() {
     console.log(`
     ╔═════════════════════════════════════════════════════╗
@@ -75,10 +95,10 @@ function handleMenuSelection(option: string) {
 function listTasks() {
     const tasks = TaskManager.listTasks();
     const tags = TaskManager.listTags();
-    const table = new Table({
-        head: ['ID', 'Title', 'Priority', 'Status', 'Due Date', 'Tags'],
-        colWidths: [5, 20, 10, 15, 15, 20]
-    });
+    const table = new Table(getTableConfig(
+        ['ID', 'Title', 'Priority', 'Status', 'Due Date', 'Tags'],
+        [5, 20, 10, 15, 15, 20]
+    ));
 
     tasks.forEach(task => {
         const tagNames = task.tagIds?.map(tagId => tags.find(tag => tag.id === tagId)?.name).filter(Boolean).join(', ') || "";
@@ -92,6 +112,9 @@ function listTasks() {
         ]);
     });
 
+    console.log("\n╔═════════════════════════════════════════════════════╗");
+    console.log("║                    ALL TASKS                        ║");
+    console.log("╚═════════════════════════════════════════════════════╝");
     console.log(table.toString());
     showMenu();
 }
@@ -123,10 +146,10 @@ function updateTask() {
         return;
     }
 
-    const taskTable = new Table({
-        head: ['ID', 'Title', 'Priority', 'Status', 'Due Date', 'Tags'],
-        colWidths: [5, 20, 10, 15, 15, 20]
-    });
+    const taskTable = new Table(getTableConfig(
+        ['ID', 'Title', 'Priority', 'Status', 'Due Date', 'Tags'],
+        [5, 20, 10, 15, 15, 20]
+    ));
 
     tasks.forEach(task => {
         const tagNames = task.tagIds?.map(tagId => tags.find(tag => tag.id === tagId)?.name).filter(Boolean).join(', ') || "";
@@ -140,7 +163,9 @@ function updateTask() {
         ]);
     });
 
-    console.log('Tasks:');
+    console.log("\n╔═════════════════════════════════════════════════════╗");
+    console.log("║                     TASKS                           ║");
+    console.log("╚═════════════════════════════════════════════════════╝");
     console.log(taskTable.toString());
 
     rl.question('Enter the ID of the task you want to update: ', taskIdInput => {
@@ -201,16 +226,18 @@ function updateTask() {
                     });
                     break;
                 case '6':
-                    const tagTable = new Table({
-                        head: ['ID', 'Name'],
-                        colWidths: [5, 20]
-                    });
+                    const tagTable = new Table(getTableConfig(
+                        ['ID', 'Name'],
+                        [5, 20]
+                    ));
 
                     tags.forEach(tag => {
                         tagTable.push([tag.id, tag.name || ""]);
                     });
 
-                    console.log('Tags:');
+                    console.log("\n╔═════════════════════════════════════════════════════╗");
+                    console.log("║                      TAGS                           ║");
+                    console.log("╚═════════════════════════════════════════════════════╝");
                     console.log(tagTable.toString());
 
                     rl.question('Enter the IDs of the tags to assign (comma-separated): ', tagIdsInput => {
@@ -238,10 +265,10 @@ function deleteTask() {
 
 function listTags() {
     const tags = TaskManager.listTags();
-    const table = new Table({
-        head: ['ID', 'Name', 'Created At'],
-        colWidths: [5, 20, 20]
-    });
+    const table = new Table(getTableConfig(
+        ['ID', 'Name', 'Created At'],
+        [5, 25, 25]
+    ));
 
     tags.forEach(tag => {
         table.push([
@@ -251,6 +278,9 @@ function listTags() {
         ]);
     });
 
+    console.log("\n╔═════════════════════════════════════════════════════╗");
+    console.log("║                    ALL TAGS                         ║");
+    console.log("╚═════════════════════════════════════════════════════╝");
     console.log(table.toString());
     showMenu();
 }
@@ -286,10 +316,10 @@ function markTaskAsCompleted() {
 function showCompletedTasks() {
     const tasks = TaskManager.listTasks().filter(task => task.status === TaskStatus.Done);
     const tags = TaskManager.listTags();
-    const table = new Table({
-        head: ['ID', 'Title', 'Priority', 'Due Date', 'Tags'],
-        colWidths: [5, 20, 10, 15, 20]
-    });
+    const table = new Table(getTableConfig(
+        ['ID', 'Title', 'Priority', 'Due Date', 'Tags'],
+        [5, 25, 10, 15, 20]
+    ));
 
     tasks.forEach(task => {
         const tagNames = task.tagIds?.map(tagId => tags.find(tag => tag.id === tagId)?.name).filter(Boolean).join(', ') || "";
@@ -302,6 +332,9 @@ function showCompletedTasks() {
         ]);
     });
 
+    console.log("\n╔═════════════════════════════════════════════════════╗");
+    console.log("║                COMPLETED TASKS                      ║");
+    console.log("╚═════════════════════════════════════════════════════╝");
     console.log(table.toString());
     showMenu();
 }
@@ -322,16 +355,18 @@ function assignTagsToTask() {
         return;
     }
 
-    const taskTable = new Table({
-        head: ['ID', 'Title', 'Priority', 'Status'],
-        colWidths: [5, 20, 10, 15]
-    });
+    const taskTable = new Table(getTableConfig(
+        ['ID', 'Title', 'Priority', 'Status'],
+        [5, 30, 10, 15]
+    ));
 
     tasks.forEach(task => {
         taskTable.push([task.id, task.title || "", task.priority || "", task.status || ""]);
     });
 
-    console.log('Tasks:');
+    console.log("\n╔═════════════════════════════════════════════════════╗");
+    console.log("║                     TASKS                           ║");
+    console.log("╚═════════════════════════════════════════════════════╝");
     console.log(taskTable.toString());
 
     rl.question('Enter the ID of the task you want to assign tags to: ', taskIdInput => {
@@ -344,16 +379,18 @@ function assignTagsToTask() {
             return;
         }
 
-        const tagTable = new Table({
-            head: ['ID', 'Name'],
-            colWidths: [5, 20]
-        });
+        const tagTable = new Table(getTableConfig(
+            ['ID', 'Name'],
+            [5, 50]
+        ));
 
         tags.forEach(tag => {
             tagTable.push([tag.id, tag.name || ""]);
         });
 
-        console.log('Tags:');
+        console.log("\n╔═════════════════════════════════════════════════════╗");
+        console.log("║                      TAGS                           ║");
+        console.log("╚═════════════════════════════════════════════════════╝");
         console.log(tagTable.toString());
 
         rl.question('Enter the IDs of the tags to assign (comma-separated): ', tagIdsInput => {
@@ -386,10 +423,10 @@ function createSubtask() {
         return;
     }
 
-    const taskTable = new Table({
-        head: ['ID', 'Title', 'Priority', 'Status', 'Due Date', 'Tags'],
-        colWidths: [5, 20, 10, 15, 15, 20]
-    });
+    const taskTable = new Table(getTableConfig(
+        ['ID', 'Title', 'Priority', 'Status', 'Due Date', 'Tags'],
+        [5, 20, 10, 15, 15, 20]
+    ));
 
     tasks.forEach(task => {
         const tags = TaskManager.listTags();
@@ -404,7 +441,9 @@ function createSubtask() {
         ]);
     });
 
-    console.log('Tasks:');
+    console.log("\n╔═════════════════════════════════════════════════════╗");
+    console.log("║                     TASKS                           ║");
+    console.log("╚═════════════════════════════════════════════════════╝");
     console.log(taskTable.toString());
 
     rl.question('Enter the ID or name of the parent task: ', input => {
