@@ -1,23 +1,16 @@
-
-
-export class Tag {
-    public id: number;
-
-    public name: string;
-
-    public createdAt: number;
-
-    constructor(id: number, name: string, createdAt?: number) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Tag = void 0;
+class Tag {
+    constructor(id, name, createdAt) {
         this.id = id;
         this.name = name;
         this.createdAt = createdAt || Date.now();
     }
-
-    static fromPlainObject(obj: any): Tag {
+    static fromPlainObject(obj) {
         return new Tag(obj.id, obj.name, obj.createdAt);
     }
-
-    toPlainObject(): { id: number; name: string; createdAt: number } {
+    toPlainObject() {
         return {
             id: this.id,
             name: this.name,
@@ -25,3 +18,4 @@ export class Tag {
         };
     }
 }
+exports.Tag = Tag;
