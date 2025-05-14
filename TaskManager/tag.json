@@ -1,0 +1,9 @@
+[
+  { "id": 1, "name": "travel", "createdAt": 1678886400000 },
+  { "id": 2, "name": "planning", "createdAt": 1678886400000 },
+  { "id": 3, "name": "health", "createdAt": 1678972800000 },
+  { "id": 4, "name": "work", "createdAt": 1679059200000 },
+  { "id": 5, "name": "bugfix", "createdAt": 1679059200000 },
+  { "id": 6, "name": "learning", "createdAt": 1679232000000 },
+  { "id": 7, "name": "programming", "createdAt": 1679232000000 }
+]
