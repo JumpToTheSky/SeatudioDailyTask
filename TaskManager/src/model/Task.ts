@@ -12,11 +12,11 @@ export class Task {
     public title: string;
     public description?: string;
     public priority: Priority;
-    public status: TaskStatus; // Changed from completed
+    public status: TaskStatus;
     public createdAt: number;
     public dueDate?: string;
-    public parentId?: number; // ID of the parent task
-    public tagIds?: number[]; // Changed from tags: string[]
+    public parentId?: number;
+    public tagIds?: number[];
 
     constructor(
         id: number,
@@ -24,29 +24,28 @@ export class Task {
         priority: Priority = 'medium',
         description?: string,
         dueDate?: string,
-        status: TaskStatus = TaskStatus.ToDo, // Changed from completed
-        createdAt?: number, 
+        status: TaskStatus = TaskStatus.ToDo,
+        createdAt?: number,
         parentId?: number,
-        tagIds?: number[] // Changed from tags: string[]
+        tagIds?: number[]
     ) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.priority = priority;
-        this.status = status; // Changed from completed
+        this.status = status;
         this.createdAt = createdAt || Date.now();
         this.dueDate = dueDate;
         this.parentId = parentId;
-        this.tagIds = tagIds; // Initialize tagIds
+        this.tagIds = tagIds;
     }
 
-    // Renamed and updated method
     updateTaskStatus(newStatus: TaskStatus): boolean {
         this.status = newStatus;
         return true;
     }
 
-    updateDetails(details: { title?: string; description?: string; priority?: Priority; dueDate?: string; parentId?: number | null; status?: TaskStatus; tagIds?: number[] }): boolean { // Changed tags to tagIds
+    updateDetails(details: { title?: string; description?: string; priority?: Priority; dueDate?: string; parentId?: number | null; status?: TaskStatus; tagIds?: number[] }): boolean {
         if (details.title !== undefined) this.title = details.title;
         if (details.description !== undefined) this.description = details.description;
         if (details.priority !== undefined) this.priority = details.priority;
@@ -54,37 +53,35 @@ export class Task {
         if (details.parentId !== undefined) {
             this.parentId = details.parentId === null ? undefined : details.parentId;
         }
-        if (details.status !== undefined) this.status = details.status; // Added status update
-        if (details.tagIds !== undefined) this.tagIds = details.tagIds; // Changed tags to tagIds
+        if (details.status !== undefined) this.status = details.status;
+        if (details.tagIds !== undefined) this.tagIds = details.tagIds;
         return true;
     }
 
-    // Phương thức để chuyển đổi instance thành object thuần túy để lưu trữ
-    toPlainObject(): Omit<Task, 'toggleCompletion' | 'updateDetails' | 'toPlainObject' | 'addSubTask' | 'removeSubTask' | 'subtasks' | 'updateTaskStatus'> & { tagIds?: number[] } { // Changed tags to tagIds
-        const plainObject: Omit<Task, 'toggleCompletion' | 'updateDetails' | 'toPlainObject' | 'addSubTask' | 'removeSubTask' | 'subtasks' | 'updateTaskStatus'> & { tagIds?: number[] } = { // Changed tags to tagIds
+    toPlainObject(): Omit<Task, 'toggleCompletion' | 'updateDetails' | 'toPlainObject' | 'addSubTask' | 'removeSubTask' | 'subtasks' | 'updateTaskStatus'> & { tagIds?: number[] } {
+        const plainObject: Omit<Task, 'toggleCompletion' | 'updateDetails' | 'toPlainObject' | 'addSubTask' | 'removeSubTask' | 'subtasks' | 'updateTaskStatus'> & { tagIds?: number[] } = {
             id: this.id,
             title: this.title,
             description: this.description,
             priority: this.priority,
-            status: this.status, // Changed from completed
+            status: this.status,
             createdAt: this.createdAt,
             dueDate: this.dueDate,
             parentId: this.parentId,
         };
 
         if (this.tagIds && this.tagIds.length > 0) {
-            plainObject.tagIds = this.tagIds; // Changed tags to tagIds
+            plainObject.tagIds = this.tagIds;
         }
 
         return plainObject;
     }
 
-    // Phương thức static để tạo Task từ object thuần túy (khi load từ file)
     static fromPlainObject(obj: any): Task {
-        let status = TaskStatus.ToDo; // Default status
+        let status = TaskStatus.ToDo;
         if (obj.status) {
             status = obj.status as TaskStatus;
-        } else if (obj.completed !== undefined) { // For backward compatibility
+        } else if (obj.completed !== undefined) {
             status = obj.completed ? TaskStatus.Done : TaskStatus.ToDo;
         }
 
@@ -94,10 +91,10 @@ export class Task {
             obj.priority,
             obj.description,
             obj.dueDate,
-            status, // Use determined status
+            status,
             obj.createdAt,
             obj.parentId,
-            obj.tagIds // Changed from obj.tags
+            obj.tagIds
         );
         return task;
     }
