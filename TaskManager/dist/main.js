@@ -44,17 +44,6 @@ const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
-class TaskCLI {
-    static askQuestion(rl, question, callback) {
-        rl.question(`${question} (type EXIT to cancel): `, (input) => {
-            if (input.toUpperCase() === 'EXIT') {
-                showMenu();
-                return;
-            }
-            callback(input);
-        });
-    }
-}
 function showMenu() {
     console.log(`
     Task Manager CLI
@@ -120,30 +109,32 @@ function handleMenuSelection(option) {
 }
 function listTasks() {
     const tasks = manageServices_1.TaskManager.listTasks();
+    const tags = manageServices_1.TaskManager.listTags();
     const table = new cli_table3_1.default({
         head: ['ID', 'Title', 'Priority', 'Status', 'Due Date', 'Tags'],
         colWidths: [5, 20, 10, 15, 15, 20]
     });
     tasks.forEach(task => {
         var _a;
+        const tagNames = ((_a = task.tagIds) === null || _a === void 0 ? void 0 : _a.map(tagId => { var _a; return (_a = tags.find(tag => tag.id === tagId)) === null || _a === void 0 ? void 0 : _a.name; }).filter(Boolean).join(', ')) || "";
         table.push([
             task.id,
             task.title || "",
             task.priority || "",
             task.status || "",
             task.dueDate || "",
-            ((_a = task.tagIds) === null || _a === void 0 ? void 0 : _a.join(', ')) || ""
+            tagNames
         ]);
     });
     console.log(table.toString());
     showMenu();
 }
 function addTask() {
-    TaskCLI.askQuestion(rl, 'Enter task title', title => {
-        TaskCLI.askQuestion(rl, 'Enter task priority (low, medium, high)', priority => {
-            TaskCLI.askQuestion(rl, 'Enter task description (optional)', description => {
-                TaskCLI.askQuestion(rl, 'Enter task due date (YYYY-MM-DD, optional)', dueDate => {
-                    TaskCLI.askQuestion(rl, 'Enter tag IDs (comma-separated, optional)', tagIdsInput => {
+    rl.question('Enter task title: ', title => {
+        rl.question('Enter task priority (low, medium, high): ', priority => {
+            rl.question('Enter task description (optional): ', description => {
+                rl.question('Enter task due date (YYYY-MM-DD, optional): ', dueDate => {
+                    rl.question('Enter tag IDs (comma-separated, optional): ', tagIdsInput => {
                         const tagIds = tagIdsInput ? tagIdsInput.split(',').map(id => Number(id.trim())) : [];
                         const task = manageServices_1.TaskManager.addTask(title, priority, description, dueDate, tagIds);
                         console.log('Task added:', task);
@@ -156,6 +147,7 @@ function addTask() {
 }
 function updateTask() {
     const tasks = manageServices_1.TaskManager.listTasks();
+    const tags = manageServices_1.TaskManager.listTags();
     if (tasks.length === 0) {
         console.log('No tasks available.');
         showMenu();
@@ -167,18 +159,19 @@ function updateTask() {
     });
     tasks.forEach(task => {
         var _a;
+        const tagNames = ((_a = task.tagIds) === null || _a === void 0 ? void 0 : _a.map(tagId => { var _a; return (_a = tags.find(tag => tag.id === tagId)) === null || _a === void 0 ? void 0 : _a.name; }).filter(Boolean).join(', ')) || "";
         taskTable.push([
             task.id,
             task.title || "",
             task.priority || "",
             task.status || "",
             task.dueDate || "",
-            ((_a = task.tagIds) === null || _a === void 0 ? void 0 : _a.join(', ')) || ""
+            tagNames
         ]);
     });
     console.log('Tasks:');
     console.log(taskTable.toString());
-    TaskCLI.askQuestion(rl, 'Enter the ID of the task you want to update', taskIdInput => {
+    rl.question('Enter the ID of the task you want to update: ', taskIdInput => {
         const taskId = Number(taskIdInput);
         const task = tasks.find(t => t.id === taskId);
         if (!task) {
@@ -195,45 +188,44 @@ function updateTask() {
         5. Due Date
         6. Tags
         `);
-        TaskCLI.askQuestion(rl, 'Choose the field to update', fieldOption => {
+        rl.question('Choose the field to update: ', fieldOption => {
             switch (fieldOption) {
                 case '1':
-                    TaskCLI.askQuestion(rl, 'Enter new title', newTitle => {
+                    rl.question('Enter new title: ', newTitle => {
                         manageServices_1.TaskManager.updateTask(taskId, { title: newTitle });
                         console.log('Task updated successfully.');
                         showMenu();
                     });
                     break;
                 case '2':
-                    TaskCLI.askQuestion(rl, 'Enter new description', newDescription => {
+                    rl.question('Enter new description: ', newDescription => {
                         manageServices_1.TaskManager.updateTask(taskId, { description: newDescription });
                         console.log('Task updated successfully.');
                         showMenu();
                     });
                     break;
                 case '3':
-                    TaskCLI.askQuestion(rl, 'Enter new priority (low, medium, high)', newPriority => {
+                    rl.question('Enter new priority (low, medium, high): ', newPriority => {
                         manageServices_1.TaskManager.updateTask(taskId, { priority: newPriority });
                         console.log('Task updated successfully.');
                         showMenu();
                     });
                     break;
                 case '4':
-                    TaskCLI.askQuestion(rl, 'Enter new status (todo, in-progress, done, cancelled)', newStatus => {
+                    rl.question('Enter new status (todo, in-progress, done, cancelled): ', newStatus => {
                         manageServices_1.TaskManager.updateTask(taskId, { status: newStatus });
                         console.log('Task updated successfully.');
                         showMenu();
                     });
                     break;
                 case '5':
-                    TaskCLI.askQuestion(rl, 'Enter new due date (YYYY-MM-DD)', newDueDate => {
+                    rl.question('Enter new due date (YYYY-MM-DD): ', newDueDate => {
                         manageServices_1.TaskManager.updateTask(taskId, { dueDate: newDueDate });
                         console.log('Task updated successfully.');
                         showMenu();
                     });
                     break;
                 case '6':
-                    const tags = manageServices_1.TaskManager.listTags();
                     const tagTable = new cli_table3_1.default({
                         head: ['ID', 'Name'],
                         colWidths: [5, 20]
@@ -243,7 +235,7 @@ function updateTask() {
                     });
                     console.log('Tags:');
                     console.log(tagTable.toString());
-                    TaskCLI.askQuestion(rl, 'Enter the IDs of the tags to assign (comma-separated)', tagIdsInput => {
+                    rl.question('Enter the IDs of the tags to assign (comma-separated): ', tagIdsInput => {
                         const tagIds = tagIdsInput.split(',').map(id => Number(id.trim()));
                         manageServices_1.TaskManager.updateTask(taskId, { tagIds });
                         console.log('Task updated successfully.');
@@ -258,7 +250,7 @@ function updateTask() {
     });
 }
 function deleteTask() {
-    TaskCLI.askQuestion(rl, 'Enter task ID to delete', id => {
+    rl.question('Enter task ID to delete: ', id => {
         const success = manageServices_1.TaskManager.deleteTask(Number(id));
         console.log(success ? 'Task deleted.' : 'Task not found.');
         showMenu();
@@ -281,21 +273,21 @@ function listTags() {
     showMenu();
 }
 function addTag() {
-    TaskCLI.askQuestion(rl, 'Enter tag name', name => {
+    rl.question('Enter tag name: ', name => {
         const tag = manageServices_1.TaskManager.addTag(name);
         console.log('Tag added:', tag);
         showMenu();
     });
 }
 function deleteTag() {
-    TaskCLI.askQuestion(rl, 'Enter tag ID to delete', id => {
+    rl.question('Enter tag ID to delete: ', id => {
         const success = manageServices_1.TaskManager.deleteTag(Number(id));
         console.log(success ? 'Tag deleted.' : 'Tag not found.');
         showMenu();
     });
 }
 function markTaskAsCompleted() {
-    TaskCLI.askQuestion(rl, 'Enter task ID to mark as completed', id => {
+    rl.question('Enter task ID to mark as completed: ', id => {
         const task = manageServices_1.TaskManager.updateTask(Number(id), { status: Task_1.TaskStatus.Done });
         if (task) {
             console.log('Task marked as completed:', task);
@@ -308,18 +300,20 @@ function markTaskAsCompleted() {
 }
 function showCompletedTasks() {
     const tasks = manageServices_1.TaskManager.listTasks().filter(task => task.status === Task_1.TaskStatus.Done);
+    const tags = manageServices_1.TaskManager.listTags();
     const table = new cli_table3_1.default({
         head: ['ID', 'Title', 'Priority', 'Due Date', 'Tags'],
         colWidths: [5, 20, 10, 15, 20]
     });
     tasks.forEach(task => {
         var _a;
+        const tagNames = ((_a = task.tagIds) === null || _a === void 0 ? void 0 : _a.map(tagId => { var _a; return (_a = tags.find(tag => tag.id === tagId)) === null || _a === void 0 ? void 0 : _a.name; }).filter(Boolean).join(', ')) || "";
         table.push([
             task.id,
             task.title || "",
             task.priority || "",
             task.dueDate || "",
-            ((_a = task.tagIds) === null || _a === void 0 ? void 0 : _a.join(', ')) || ""
+            tagNames
         ]);
     });
     console.log(table.toString());
@@ -347,7 +341,7 @@ function assignTagsToTask() {
     });
     console.log('Tasks:');
     console.log(taskTable.toString());
-    TaskCLI.askQuestion(rl, 'Enter the ID of the task you want to assign tags to', taskIdInput => {
+    rl.question('Enter the ID of the task you want to assign tags to: ', taskIdInput => {
         const taskId = Number(taskIdInput);
         const task = tasks.find(t => t.id === taskId);
         if (!task) {
@@ -364,7 +358,7 @@ function assignTagsToTask() {
         });
         console.log('Tags:');
         console.log(tagTable.toString());
-        TaskCLI.askQuestion(rl, 'Enter the IDs of the tags to assign (comma-separated)', tagIdsInput => {
+        rl.question('Enter the IDs of the tags to assign (comma-separated): ', tagIdsInput => {
             const tagIds = tagIdsInput.split(',').map(id => Number(id.trim()));
             const validTagIds = tags.filter(tag => tagIds.includes(tag.id)).map(tag => tag.id);
             if (validTagIds.length === 0) {
@@ -396,28 +390,30 @@ function createSubtask() {
     });
     tasks.forEach(task => {
         var _a;
+        const tags = manageServices_1.TaskManager.listTags();
+        const tagNames = ((_a = task.tagIds) === null || _a === void 0 ? void 0 : _a.map(tagId => { var _a; return (_a = tags.find(tag => tag.id === tagId)) === null || _a === void 0 ? void 0 : _a.name; }).filter(Boolean).join(', ')) || "";
         taskTable.push([
             task.id,
             task.title || "",
             task.priority || "",
             task.status || "",
             task.dueDate || "",
-            ((_a = task.tagIds) === null || _a === void 0 ? void 0 : _a.join(', ')) || ""
+            tagNames
         ]);
     });
     console.log('Tasks:');
     console.log(taskTable.toString());
-    TaskCLI.askQuestion(rl, 'Enter the ID or name of the parent task', input => {
+    rl.question('Enter the ID or name of the parent task: ', input => {
         const parentTask = tasks.find(task => task.id === Number(input) || task.title === input);
         if (!parentTask) {
             console.log('Parent task not found.');
             showMenu();
             return;
         }
-        TaskCLI.askQuestion(rl, 'Enter subtask title', title => {
-            TaskCLI.askQuestion(rl, 'Enter subtask priority (low, medium, high)', priority => {
-                TaskCLI.askQuestion(rl, 'Enter subtask description (optional)', description => {
-                    TaskCLI.askQuestion(rl, 'Enter subtask due date (YYYY-MM-DD, optional)', dueDate => {
+        rl.question('Enter subtask title: ', title => {
+            rl.question('Enter subtask priority (low, medium, high): ', priority => {
+                rl.question('Enter subtask description (optional): ', description => {
+                    rl.question('Enter subtask due date (YYYY-MM-DD, optional): ', dueDate => {
                         const subtask = manageServices_1.TaskManager.addTask(title, priority, description, dueDate, [], parentTask.id);
                         console.log('Subtask created:', subtask);
                         showMenu();

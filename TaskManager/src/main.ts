@@ -10,20 +10,19 @@ const rl = readline.createInterface({
 
 function showMenu() {
     console.log(`
-    Task Manager CLI
-    ----------------
-    1. List all tasks
-    2. Add a new task
-    3. Create a subtask
-    4. Update a task
-    5. Delete a task
-    6. Mark a task as completed
-    7. Show completed tasks
-    8. List all tags
-    9. Add a new tag
-    10. Delete a tag
-    11. Assign tags to a task
-    12. Exit
+    ╔═════════════════════════════════════════════════════╗
+    ║          Task Manager CLI (type 'EXIT' to cancel)   ║
+    ╠═════════════════════════════════════════════════════╣
+    ║ 1. List all tasks         8. List all tags          ║
+    ║ 2. Add a new task         9. Add a new tag          ║
+    ║ 3. Create a subtask       10. Delete a tag          ║
+    ║ 4. Update a task          11. Assign tags to a task ║
+    ║ 5. Delete a task                                    ║
+    ║ 6. Mark task as completed                           ║
+    ║ 7. Show completed tasks                             ║
+    ║                                                     ║
+    ║ 12. Exit application                                ║
+    ╚═════════════════════════════════════════════════════╝
     `);
     rl.question('Choose an option: ', handleMenuSelection);
 }
