@@ -6,9 +6,12 @@ const Task_1 = require("../model/Task");
 const Tag_1 = require("../model/Tag");
 const dataStorage_2 = require("./dataStorage");
 class TaskManager {
-    static addTask(title, priority = 'medium') {
+    static addTask(title, priority = 'medium', description, dueDate, tagIds, parentId) {
         const tasks = (0, dataStorage_1.loadTasksFromFile)();
-        const newTask = new Task_1.Task(tasks.length + 1, title, priority);
+        const tags = (0, dataStorage_2.loadTagsFromFile)();
+        // Validate tag IDs
+        const validTagIds = (tagIds === null || tagIds === void 0 ? void 0 : tagIds.filter(tagId => tags.some(tag => tag.id === tagId))) || [];
+        const newTask = new Task_1.Task(tasks.length + 1, title, priority, description, dueDate, Task_1.TaskStatus.ToDo, undefined, parentId, validTagIds);
         tasks.push(newTask.toPlainObject());
         (0, dataStorage_1.saveTasksToFile)(tasks);
         return newTask;
@@ -21,8 +24,16 @@ class TaskManager {
         const task = Task_1.Task.fromPlainObject(tasks[taskIndex]);
         if (updates.title !== undefined)
             task.title = updates.title;
+        if (updates.description !== undefined)
+            task.description = updates.description;
+        if (updates.priority !== undefined)
+            task.priority = updates.priority;
         if (updates.status !== undefined)
             task.updateTaskStatus(updates.status);
+        if (updates.dueDate !== undefined)
+            task.dueDate = updates.dueDate;
+        if (updates.tagIds !== undefined)
+            task.tagIds = updates.tagIds;
         tasks[taskIndex] = task.toPlainObject();
         (0, dataStorage_1.saveTasksToFile)(tasks);
         return task;

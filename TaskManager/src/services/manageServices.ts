@@ -9,7 +9,8 @@ export class TaskManager {
         priority: Priority = 'medium',
         description?: string,
         dueDate?: string,
-        tagIds?: number[]
+        tagIds?: number[],
+        parentId?: number
     ): Task {
         const tasks = loadTasksFromFile();
         const tags = loadTagsFromFile();
@@ -25,7 +26,7 @@ export class TaskManager {
             dueDate,
             TaskStatus.ToDo,
             undefined,
-            undefined,
+            parentId,
             validTagIds
         );
         tasks.push(newTask.toPlainObject());
@@ -35,15 +36,27 @@ export class TaskManager {
 
     static updateTask(
         id: number,
-        updates: { title?: string; status?: TaskStatus }
+        updates: { 
+            title?: string; 
+            description?: string; 
+            priority?: Priority; 
+            status?: TaskStatus; 
+            dueDate?: string; 
+            tagIds?: number[] 
+        }
     ): Task | null {
         const tasks = loadTasksFromFile();
         const taskIndex = tasks.findIndex(task => task.id === id);
         if (taskIndex === -1) return null;
 
         const task = Task.fromPlainObject(tasks[taskIndex]);
+
         if (updates.title !== undefined) task.title = updates.title;
+        if (updates.description !== undefined) task.description = updates.description;
+        if (updates.priority !== undefined) task.priority = updates.priority;
         if (updates.status !== undefined) task.updateTaskStatus(updates.status);
+        if (updates.dueDate !== undefined) task.dueDate = updates.dueDate;
+        if (updates.tagIds !== undefined) task.tagIds = updates.tagIds;
 
         tasks[taskIndex] = task.toPlainObject();
         saveTasksToFile(tasks);

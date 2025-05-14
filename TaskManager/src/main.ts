@@ -1,7 +1,7 @@
 import * as readline from 'readline';
 import { TaskManager } from './services/manageServices';
 import { TaskStatus, Priority } from './model/Task';
-import Table from 'cli-table3'; // Import cli-table3
+import Table from 'cli-table3';
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -14,14 +14,16 @@ function showMenu() {
     ----------------
     1. List all tasks
     2. Add a new task
-    3. Update a task
-    4. Delete a task
-    5. List all tags
-    6. Add a new tag
-    7. Delete a tag
-    8. Mark a task as completed
-    9. Show completed tasks
-    10. Exit
+    3. Create a subtask
+    4. Update a task
+    5. Delete a task
+    6. Mark a task as completed
+    7. Show completed tasks
+    8. List all tags
+    9. Add a new tag
+    10. Delete a tag
+    11. Assign tags to a task
+    12. Exit
     `);
     rl.question('Choose an option: ', handleMenuSelection);
 }
@@ -35,27 +37,33 @@ function handleMenuSelection(option: string) {
             addTask();
             break;
         case '3':
-            updateTask();
+            createSubtask();
             break;
         case '4':
-            deleteTask();
+            updateTask();
             break;
         case '5':
-            listTags();
+            deleteTask();
             break;
         case '6':
-            addTag();
-            break;
-        case '7':
-            deleteTag();
-            break;
-        case '8':
             markTaskAsCompleted();
             break;
-        case '9':
+        case '7':
             showCompletedTasks();
             break;
+        case '8':
+            listTags();
+            break;
+        case '9':
+            addTag();
+            break;
         case '10':
+            deleteTag();
+            break;
+        case '11':
+            assignTagsToTask();
+            break;
+        case '12':
             console.log('Exiting...');
             rl.close();
             break;
@@ -67,19 +75,21 @@ function handleMenuSelection(option: string) {
 
 function listTasks() {
     const tasks = TaskManager.listTasks();
+    const tags = TaskManager.listTags();
     const table = new Table({
         head: ['ID', 'Title', 'Priority', 'Status', 'Due Date', 'Tags'],
         colWidths: [5, 20, 10, 15, 15, 20]
     });
 
     tasks.forEach(task => {
+        const tagNames = task.tagIds?.map(tagId => tags.find(tag => tag.id === tagId)?.name).filter(Boolean).join(', ') || "";
         table.push([
             task.id,
-            task.title,
-            task.priority,
-            task.status,
-            task.dueDate || 'N/A',
-            task.tagIds?.join(', ') || 'None'
+            task.title || "",
+            task.priority || "",
+            task.status || "",
+            task.dueDate || "",
+            tagNames
         ]);
     });
 
@@ -90,28 +100,131 @@ function listTasks() {
 function addTask() {
     rl.question('Enter task title: ', title => {
         rl.question('Enter task priority (low, medium, high): ', priority => {
-            const task = TaskManager.addTask(title, priority as Priority);
-            console.log('Task added:', task);
-            showMenu();
+            rl.question('Enter task description (optional): ', description => {
+                rl.question('Enter task due date (YYYY-MM-DD, optional): ', dueDate => {
+                    rl.question('Enter tag IDs (comma-separated, optional): ', tagIdsInput => {
+                        const tagIds = tagIdsInput ? tagIdsInput.split(',').map(id => Number(id.trim())) : [];
+                        const task = TaskManager.addTask(title, priority as Priority, description, dueDate, tagIds);
+                        console.log('Task added:', task);
+                        showMenu();
+                    });
+                });
+            });
         });
     });
 }
 
 function updateTask() {
-    rl.question('Enter task ID to update: ', id => {
-        rl.question('Enter new title (leave blank to skip): ', title => {
-            rl.question('Enter new status (todo, in-progress, done, cancelled): ', status => {
-                const updates: any = {};
-                if (title) updates.title = title;
-                if (status) updates.status = status as TaskStatus;
-                const task = TaskManager.updateTask(Number(id), updates);
-                if (task) {
-                    console.log('Task updated:', task);
-                } else {
-                    console.log('Task not found.');
-                }
-                showMenu();
-            });
+    const tasks = TaskManager.listTasks();
+    const tags = TaskManager.listTags();
+
+    if (tasks.length === 0) {
+        console.log('No tasks available.');
+        showMenu();
+        return;
+    }
+
+    const taskTable = new Table({
+        head: ['ID', 'Title', 'Priority', 'Status', 'Due Date', 'Tags'],
+        colWidths: [5, 20, 10, 15, 15, 20]
+    });
+
+    tasks.forEach(task => {
+        const tagNames = task.tagIds?.map(tagId => tags.find(tag => tag.id === tagId)?.name).filter(Boolean).join(', ') || "";
+        taskTable.push([
+            task.id,
+            task.title || "",
+            task.priority || "",
+            task.status || "",
+            task.dueDate || "",
+            tagNames
+        ]);
+    });
+
+    console.log('Tasks:');
+    console.log(taskTable.toString());
+
+    rl.question('Enter the ID of the task you want to update: ', taskIdInput => {
+        const taskId = Number(taskIdInput);
+        const task = tasks.find(t => t.id === taskId);
+
+        if (!task) {
+            console.log('Invalid task ID.');
+            showMenu();
+            return;
+        }
+
+        console.log(`
+        Update Options:
+        1. Title
+        2. Description
+        3. Priority
+        4. Status
+        5. Due Date
+        6. Tags
+        `);
+
+        rl.question('Choose the field to update: ', fieldOption => {
+            switch (fieldOption) {
+                case '1':
+                    rl.question('Enter new title: ', newTitle => {
+                        TaskManager.updateTask(taskId, { title: newTitle });
+                        console.log('Task updated successfully.');
+                        showMenu();
+                    });
+                    break;
+                case '2':
+                    rl.question('Enter new description: ', newDescription => {
+                        TaskManager.updateTask(taskId, { description: newDescription });
+                        console.log('Task updated successfully.');
+                        showMenu();
+                    });
+                    break;
+                case '3':
+                    rl.question('Enter new priority (low, medium, high): ', newPriority => {
+                        TaskManager.updateTask(taskId, { priority: newPriority as Priority });
+                        console.log('Task updated successfully.');
+                        showMenu();
+                    });
+                    break;
+                case '4':
+                    rl.question('Enter new status (todo, in-progress, done, cancelled): ', newStatus => {
+                        TaskManager.updateTask(taskId, { status: newStatus as TaskStatus });
+                        console.log('Task updated successfully.');
+                        showMenu();
+                    });
+                    break;
+                case '5':
+                    rl.question('Enter new due date (YYYY-MM-DD): ', newDueDate => {
+                        TaskManager.updateTask(taskId, { dueDate: newDueDate });
+                        console.log('Task updated successfully.');
+                        showMenu();
+                    });
+                    break;
+                case '6':
+                    const tagTable = new Table({
+                        head: ['ID', 'Name'],
+                        colWidths: [5, 20]
+                    });
+
+                    tags.forEach(tag => {
+                        tagTable.push([tag.id, tag.name || ""]);
+                    });
+
+                    console.log('Tags:');
+                    console.log(tagTable.toString());
+
+                    rl.question('Enter the IDs of the tags to assign (comma-separated): ', tagIdsInput => {
+                        const tagIds = tagIdsInput.split(',').map(id => Number(id.trim()));
+                        TaskManager.updateTask(taskId, { tagIds });
+                        console.log('Task updated successfully.');
+                        showMenu();
+                    });
+                    break;
+                default:
+                    console.log('Invalid option.');
+                    showMenu();
+            }
         });
     });
 }
@@ -132,7 +245,11 @@ function listTags() {
     });
 
     tags.forEach(tag => {
-        table.push([tag.id, tag.name, new Date(tag.createdAt).toLocaleString()]);
+        table.push([
+            tag.id,
+            tag.name || "",
+            tag.createdAt ? new Date(tag.createdAt).toLocaleString() : ""
+        ]);
     });
 
     console.log(table.toString());
@@ -169,23 +286,156 @@ function markTaskAsCompleted() {
 
 function showCompletedTasks() {
     const tasks = TaskManager.listTasks().filter(task => task.status === TaskStatus.Done);
+    const tags = TaskManager.listTags();
     const table = new Table({
         head: ['ID', 'Title', 'Priority', 'Due Date', 'Tags'],
         colWidths: [5, 20, 10, 15, 20]
     });
 
     tasks.forEach(task => {
+        const tagNames = task.tagIds?.map(tagId => tags.find(tag => tag.id === tagId)?.name).filter(Boolean).join(', ') || "";
         table.push([
             task.id,
-            task.title,
-            task.priority,
-            task.dueDate || 'N/A',
-            task.tagIds?.join(', ') || 'None'
+            task.title || "",
+            task.priority || "",
+            task.dueDate || "",
+            tagNames
         ]);
     });
 
     console.log(table.toString());
     showMenu();
+}
+
+function assignTagsToTask() {
+    const tasks = TaskManager.listTasks();
+    const tags = TaskManager.listTags();
+
+    if (tasks.length === 0) {
+        console.log('No tasks available.');
+        showMenu();
+        return;
+    }
+
+    if (tags.length === 0) {
+        console.log('No tags available.');
+        showMenu();
+        return;
+    }
+
+    const taskTable = new Table({
+        head: ['ID', 'Title', 'Priority', 'Status'],
+        colWidths: [5, 20, 10, 15]
+    });
+
+    tasks.forEach(task => {
+        taskTable.push([task.id, task.title || "", task.priority || "", task.status || ""]);
+    });
+
+    console.log('Tasks:');
+    console.log(taskTable.toString());
+
+    rl.question('Enter the ID of the task you want to assign tags to: ', taskIdInput => {
+        const taskId = Number(taskIdInput);
+        const task = tasks.find(t => t.id === taskId);
+
+        if (!task) {
+            console.log('Invalid task ID.');
+            showMenu();
+            return;
+        }
+
+        const tagTable = new Table({
+            head: ['ID', 'Name'],
+            colWidths: [5, 20]
+        });
+
+        tags.forEach(tag => {
+            tagTable.push([tag.id, tag.name || ""]);
+        });
+
+        console.log('Tags:');
+        console.log(tagTable.toString());
+
+        rl.question('Enter the IDs of the tags to assign (comma-separated): ', tagIdsInput => {
+            const tagIds = tagIdsInput.split(',').map(id => Number(id.trim()));
+            const validTagIds = tags.filter(tag => tagIds.includes(tag.id)).map(tag => tag.id);
+
+            if (validTagIds.length === 0) {
+                console.log('No valid tags selected.');
+                showMenu();
+                return;
+            }
+
+            const updatedTask = TaskManager.updateTask(taskId, { tagIds: validTagIds });
+            if (updatedTask) {
+                console.log('Tags assigned successfully:', updatedTask);
+            } else {
+                console.log('Failed to assign tags.');
+            }
+            showMenu();
+        });
+    });
+}
+
+function createSubtask() {
+    const tasks = TaskManager.listTasks();
+
+    if (tasks.length === 0) {
+        console.log('No tasks available.');
+        showMenu();
+        return;
+    }
+
+    const taskTable = new Table({
+        head: ['ID', 'Title', 'Priority', 'Status', 'Due Date', 'Tags'],
+        colWidths: [5, 20, 10, 15, 15, 20]
+    });
+
+    tasks.forEach(task => {
+        const tags = TaskManager.listTags();
+        const tagNames = task.tagIds?.map(tagId => tags.find(tag => tag.id === tagId)?.name).filter(Boolean).join(', ') || "";
+        taskTable.push([
+            task.id,
+            task.title || "",
+            task.priority || "",
+            task.status || "",
+            task.dueDate || "",
+            tagNames
+        ]);
+    });
+
+    console.log('Tasks:');
+    console.log(taskTable.toString());
+
+    rl.question('Enter the ID or name of the parent task: ', input => {
+        const parentTask = tasks.find(task => task.id === Number(input) || task.title === input);
+
+        if (!parentTask) {
+            console.log('Parent task not found.');
+            showMenu();
+            return;
+        }
+
+        rl.question('Enter subtask title: ', title => {
+            rl.question('Enter subtask priority (low, medium, high): ', priority => {
+                rl.question('Enter subtask description (optional): ', description => {
+                    rl.question('Enter subtask due date (YYYY-MM-DD, optional): ', dueDate => {
+                        const subtask = TaskManager.addTask(
+                            title,
+                            priority as Priority,
+                            description,
+                            dueDate,
+                            [],
+                            parentTask.id
+                        );
+                        console.log('Subtask created:', subtask);
+                        showMenu();
+                    });
+                });
+            });
+        });
+    });
 }
 
 showMenu();
