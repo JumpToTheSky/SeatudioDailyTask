@@ -1,5 +1,16 @@
 {
   "devDependencies": {
     "typescript": "^5.8.3"
-  }
+  },
+  "name": "test",
+  "version": "1.0.0",
+  "main": "Test2.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node decoration_test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }

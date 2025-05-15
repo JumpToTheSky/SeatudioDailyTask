@@ -1,4 +1,5 @@
-var A = {
+"use strict";
+let A = {
     Name: "John",
     Age: 30
 };

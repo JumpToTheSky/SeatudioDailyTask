@@ -1,7 +1,6 @@
-import { loadTasksFromFile, saveTasksToFile } from './dataStorage';
+import { DataStorage } from './dataStorage';
 import { Task, TaskStatus, Priority } from '../model/Task';
 import { Tag } from '../model/Tag';
-import { loadTagsFromFile, saveTagsToFile } from './dataStorage';
 
 export class TaskManager {
     static addTask(
@@ -12,14 +11,10 @@ export class TaskManager {
         tagIds?: number[],
         parentId?: number
     ): Task {
-        const tasks = loadTasksFromFile();
-        const tags = loadTagsFromFile();
-
-        // Validate tag IDs
+        const tags = DataStorage.modifyTags([], (tags) => tags); // Load tags
         const validTagIds = tagIds?.filter(tagId => tags.some(tag => tag.id === tagId)) || [];
-
         const newTask = new Task(
-            tasks.length + 1,
+            DataStorage.modifyTasks([], (tasks) => tasks.length + 1),
             title,
             priority,
             description,
@@ -29,8 +24,7 @@ export class TaskManager {
             parentId,
             validTagIds
         );
-        tasks.push(newTask.toPlainObject());
-        saveTasksToFile(tasks);
+        DataStorage.modifyTasks([], (tasks) => tasks.push(newTask.toPlainObject()));
         return newTask;
     }
 
@@ -45,59 +39,63 @@ export class TaskManager {
             tagIds?: number[] 
         }
     ): Task | null {
-        const tasks = loadTasksFromFile();
-        const taskIndex = tasks.findIndex(task => task.id === id);
-        if (taskIndex === -1) return null;
+        return DataStorage.modifyTasks<Task | null>([], (tasks) => {
+            const taskIndex = tasks.findIndex(task => task.id === id);
+            if (taskIndex === -1) return null;
 
-        const task = Task.fromPlainObject(tasks[taskIndex]);
+            const task = Task.fromPlainObject(tasks[taskIndex]);
+            if (updates.title !== undefined) task.title = updates.title;
+            if (updates.description !== undefined) task.description = updates.description;
+            if (updates.priority !== undefined) task.priority = updates.priority;
+            if (updates.status !== undefined) task.updateTaskStatus(updates.status);
+            if (updates.dueDate !== undefined) task.dueDate = updates.dueDate;
+            if (updates.tagIds !== undefined) task.tagIds = updates.tagIds;
 
-        if (updates.title !== undefined) task.title = updates.title;
-        if (updates.description !== undefined) task.description = updates.description;
-        if (updates.priority !== undefined) task.priority = updates.priority;
-        if (updates.status !== undefined) task.updateTaskStatus(updates.status);
-        if (updates.dueDate !== undefined) task.dueDate = updates.dueDate;
-        if (updates.tagIds !== undefined) task.tagIds = updates.tagIds;
-
-        tasks[taskIndex] = task.toPlainObject();
-        saveTasksToFile(tasks);
-        return task;
+            tasks[taskIndex] = task.toPlainObject();
+            return task;
+        });
     }
 
     static deleteTask(id: number): boolean {
-        let tasks = loadTasksFromFile();
-        const initialLength = tasks.length;
-        tasks = tasks.filter(task => task.id !== id);
-        if (tasks.length === initialLength) return false;
-
-        saveTasksToFile(tasks);
-        return true;
+        return DataStorage.modifyTasks<boolean>([], (tasks) => {
+            const initialLength = tasks.length;
+            const filteredTasks = tasks.filter(task => task.id !== id);
+            if (filteredTasks.length !== initialLength) {
+                tasks.length = 0;
+                tasks.push(...filteredTasks);
+                return true;
+            }
+            return false;
+        });
     }
 
     static listTasks(): Task[] {
-        const tasks = loadTasksFromFile();
-        return tasks.map(Task.fromPlainObject);
+        return DataStorage.modifyTasks([], (tasks) => tasks.map(Task.fromPlainObject));
     }
 
     static listTags(): Tag[] {
-        const tags = loadTagsFromFile();
-        return tags.map(Tag.fromPlainObject);
+        return DataStorage.modifyTags([], (tags) => tags.map(Tag.fromPlainObject));
     }
 
     static addTag(name: string): Tag {
-        const tags = loadTagsFromFile();
-        const newTag = new Tag(tags.length + 1, name);
-        tags.push(newTag.toPlainObject());
-        saveTagsToFile(tags);
+        const newTag = new Tag(
+            DataStorage.modifyTags([], (tags) => tags.length + 1),
+            name
+        );
+        DataStorage.modifyTags([], (tags) => tags.push(newTag.toPlainObject()));
         return newTag;
     }
 
     static deleteTag(id: number): boolean {
-        let tags = loadTagsFromFile();
-        const initialLength = tags.length;
-        tags = tags.filter(tag => tag.id !== id);
-        if (tags.length === initialLength) return false;
-
-        saveTagsToFile(tags);
-        return true;
+        return DataStorage.modifyTags<boolean>([], (tags) => {
+            const initialLength = tags.length;
+            const filteredTags = tags.filter(tag => tag.id !== id);
+            if (filteredTags.length !== initialLength) {
+                tags.length = 0;
+                tags.push(...filteredTags);
+                return true;
+            }
+            return false;
+        });
     }
 }

@@ -8,6 +8,7 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
+
 function getTableConfig(headers: string[], widths: number[]) {
     return {
         head: headers,
