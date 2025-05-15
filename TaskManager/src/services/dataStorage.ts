@@ -7,10 +7,13 @@ const tagsFilePath = path.join(__dirname, '..', '..', 'tag.json');
 function autoSaveLoad(filePath: string) {
     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
         const originalMethod = descriptor.value;
-        descriptor.value = function (...args: any[]) {
-            const data = fs.existsSync(filePath) ? JSON.parse(fs.readFileSync(filePath, 'utf-8')) : [];
-            const result = originalMethod.apply(this, [data, ...args]);
-            fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
+        descriptor.value = function (data: any[], callback: (data: any[]) => any, ...args: any[]) {
+            if (typeof callback !== 'function') {
+                throw new Error(`Callback is not a function in method ${propertyKey}`);
+            }
+            const fileData = fs.existsSync(filePath) ? JSON.parse(fs.readFileSync(filePath, 'utf-8')) : [];
+            const result = originalMethod.apply(this, [fileData, callback, ...args]);
+            fs.writeFileSync(filePath, JSON.stringify(fileData, null, 2), 'utf-8');
             return result;
         };
         return descriptor;

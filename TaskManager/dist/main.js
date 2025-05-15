@@ -44,22 +44,40 @@ const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
+function getTableConfig(headers, widths) {
+    return {
+        head: headers,
+        colWidths: widths,
+        wordWrap: true,
+        chars: {
+            'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗',
+            'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝',
+            'left': '║', 'left-mid': '╟', 'mid': '─', 'mid-mid': '┼',
+            'right': '║', 'right-mid': '╢', 'middle': '│'
+        },
+        style: {
+            head: ['cyan', 'bold'],
+            border: ['grey'],
+            'padding-left': 1,
+            'padding-right': 1
+        }
+    };
+}
 function showMenu() {
     console.log(`
-    Task Manager CLI
-    ----------------
-    1. List all tasks
-    2. Add a new task
-    3. Create a subtask
-    4. Update a task
-    5. Delete a task
-    6. Mark a task as completed
-    7. Show completed tasks
-    8. List all tags
-    9. Add a new tag
-    10. Delete a tag
-    11. Assign tags to a task
-    12. Exit
+    ╔═════════════════════════════════════════════════════╗
+    ║          Task Manager CLI (type 'EXIT' to cancel)   ║
+    ╠═════════════════════════════════════════════════════╣
+    ║ 1. List all tasks         8. List all tags          ║
+    ║ 2. Add a new task         9. Add a new tag          ║
+    ║ 3. Create a subtask       10. Delete a tag          ║
+    ║ 4. Update a task          11. Assign tags to a task ║
+    ║ 5. Delete a task                                    ║
+    ║ 6. Mark task as completed                           ║
+    ║ 7. Show completed tasks                             ║
+    ║                                                     ║
+    ║ 12. Exit application                                ║
+    ╚═════════════════════════════════════════════════════╝
     `);
     rl.question('Choose an option: ', handleMenuSelection);
 }
@@ -110,10 +128,7 @@ function handleMenuSelection(option) {
 function listTasks() {
     const tasks = manageServices_1.TaskManager.listTasks();
     const tags = manageServices_1.TaskManager.listTags();
-    const table = new cli_table3_1.default({
-        head: ['ID', 'Title', 'Priority', 'Status', 'Due Date', 'Tags'],
-        colWidths: [5, 20, 10, 15, 15, 20]
-    });
+    const table = new cli_table3_1.default(getTableConfig(['ID', 'Title', 'Priority', 'Status', 'Due Date', 'Tags'], [5, 20, 10, 15, 15, 20]));
     tasks.forEach(task => {
         var _a;
         const tagNames = ((_a = task.tagIds) === null || _a === void 0 ? void 0 : _a.map(tagId => { var _a; return (_a = tags.find(tag => tag.id === tagId)) === null || _a === void 0 ? void 0 : _a.name; }).filter(Boolean).join(', ')) || "";
@@ -126,6 +141,9 @@ function listTasks() {
             tagNames
         ]);
     });
+    console.log("\n╔═════════════════════════════════════════════════════╗");
+    console.log("║                    ALL TASKS                        ║");
+    console.log("╚═════════════════════════════════════════════════════╝");
     console.log(table.toString());
     showMenu();
 }
@@ -153,10 +171,7 @@ function updateTask() {
         showMenu();
         return;
     }
-    const taskTable = new cli_table3_1.default({
-        head: ['ID', 'Title', 'Priority', 'Status', 'Due Date', 'Tags'],
-        colWidths: [5, 20, 10, 15, 15, 20]
-    });
+    const taskTable = new cli_table3_1.default(getTableConfig(['ID', 'Title', 'Priority', 'Status', 'Due Date', 'Tags'], [5, 20, 10, 15, 15, 20]));
     tasks.forEach(task => {
         var _a;
         const tagNames = ((_a = task.tagIds) === null || _a === void 0 ? void 0 : _a.map(tagId => { var _a; return (_a = tags.find(tag => tag.id === tagId)) === null || _a === void 0 ? void 0 : _a.name; }).filter(Boolean).join(', ')) || "";
@@ -169,7 +184,9 @@ function updateTask() {
             tagNames
         ]);
     });
-    console.log('Tasks:');
+    console.log("\n╔═════════════════════════════════════════════════════╗");
+    console.log("║                     TASKS                           ║");
+    console.log("╚═════════════════════════════════════════════════════╝");
     console.log(taskTable.toString());
     rl.question('Enter the ID of the task you want to update: ', taskIdInput => {
         const taskId = Number(taskIdInput);
@@ -226,14 +243,13 @@ function updateTask() {
                     });
                     break;
                 case '6':
-                    const tagTable = new cli_table3_1.default({
-                        head: ['ID', 'Name'],
-                        colWidths: [5, 20]
-                    });
+                    const tagTable = new cli_table3_1.default(getTableConfig(['ID', 'Name'], [5, 20]));
                     tags.forEach(tag => {
                         tagTable.push([tag.id, tag.name || ""]);
                     });
-                    console.log('Tags:');
+                    console.log("\n╔═════════════════════════════════════════════════════╗");
+                    console.log("║                      TAGS                           ║");
+                    console.log("╚═════════════════════════════════════════════════════╝");
                     console.log(tagTable.toString());
                     rl.question('Enter the IDs of the tags to assign (comma-separated): ', tagIdsInput => {
                         const tagIds = tagIdsInput.split(',').map(id => Number(id.trim()));
@@ -258,10 +274,7 @@ function deleteTask() {
 }
 function listTags() {
     const tags = manageServices_1.TaskManager.listTags();
-    const table = new cli_table3_1.default({
-        head: ['ID', 'Name', 'Created At'],
-        colWidths: [5, 20, 20]
-    });
+    const table = new cli_table3_1.default(getTableConfig(['ID', 'Name', 'Created At'], [5, 25, 25]));
     tags.forEach(tag => {
         table.push([
             tag.id,
@@ -269,6 +282,9 @@ function listTags() {
             tag.createdAt ? new Date(tag.createdAt).toLocaleString() : ""
         ]);
     });
+    console.log("\n╔═════════════════════════════════════════════════════╗");
+    console.log("║                    ALL TAGS                         ║");
+    console.log("╚═════════════════════════════════════════════════════╝");
     console.log(table.toString());
     showMenu();
 }
@@ -301,10 +317,7 @@ function markTaskAsCompleted() {
 function showCompletedTasks() {
     const tasks = manageServices_1.TaskManager.listTasks().filter(task => task.status === Task_1.TaskStatus.Done);
     const tags = manageServices_1.TaskManager.listTags();
-    const table = new cli_table3_1.default({
-        head: ['ID', 'Title', 'Priority', 'Due Date', 'Tags'],
-        colWidths: [5, 20, 10, 15, 20]
-    });
+    const table = new cli_table3_1.default(getTableConfig(['ID', 'Title', 'Priority', 'Due Date', 'Tags'], [5, 25, 10, 15, 20]));
     tasks.forEach(task => {
         var _a;
         const tagNames = ((_a = task.tagIds) === null || _a === void 0 ? void 0 : _a.map(tagId => { var _a; return (_a = tags.find(tag => tag.id === tagId)) === null || _a === void 0 ? void 0 : _a.name; }).filter(Boolean).join(', ')) || "";
@@ -316,6 +329,9 @@ function showCompletedTasks() {
             tagNames
         ]);
     });
+    console.log("\n╔═════════════════════════════════════════════════════╗");
+    console.log("║                COMPLETED TASKS                      ║");
+    console.log("╚═════════════════════════════════════════════════════╝");
     console.log(table.toString());
     showMenu();
 }
@@ -332,14 +348,13 @@ function assignTagsToTask() {
         showMenu();
         return;
     }
-    const taskTable = new cli_table3_1.default({
-        head: ['ID', 'Title', 'Priority', 'Status'],
-        colWidths: [5, 20, 10, 15]
-    });
+    const taskTable = new cli_table3_1.default(getTableConfig(['ID', 'Title', 'Priority', 'Status'], [5, 30, 10, 15]));
     tasks.forEach(task => {
         taskTable.push([task.id, task.title || "", task.priority || "", task.status || ""]);
     });
-    console.log('Tasks:');
+    console.log("\n╔═════════════════════════════════════════════════════╗");
+    console.log("║                     TASKS                           ║");
+    console.log("╚═════════════════════════════════════════════════════╝");
     console.log(taskTable.toString());
     rl.question('Enter the ID of the task you want to assign tags to: ', taskIdInput => {
         const taskId = Number(taskIdInput);
@@ -349,14 +364,13 @@ function assignTagsToTask() {
             showMenu();
             return;
         }
-        const tagTable = new cli_table3_1.default({
-            head: ['ID', 'Name'],
-            colWidths: [5, 20]
-        });
+        const tagTable = new cli_table3_1.default(getTableConfig(['ID', 'Name'], [5, 50]));
         tags.forEach(tag => {
             tagTable.push([tag.id, tag.name || ""]);
         });
-        console.log('Tags:');
+        console.log("\n╔═════════════════════════════════════════════════════╗");
+        console.log("║                      TAGS                           ║");
+        console.log("╚═════════════════════════════════════════════════════╝");
         console.log(tagTable.toString());
         rl.question('Enter the IDs of the tags to assign (comma-separated): ', tagIdsInput => {
             const tagIds = tagIdsInput.split(',').map(id => Number(id.trim()));
@@ -384,10 +398,7 @@ function createSubtask() {
         showMenu();
         return;
     }
-    const taskTable = new cli_table3_1.default({
-        head: ['ID', 'Title', 'Priority', 'Status', 'Due Date', 'Tags'],
-        colWidths: [5, 20, 10, 15, 15, 20]
-    });
+    const taskTable = new cli_table3_1.default(getTableConfig(['ID', 'Title', 'Priority', 'Status', 'Due Date', 'Tags'], [5, 20, 10, 15, 15, 20]));
     tasks.forEach(task => {
         var _a;
         const tags = manageServices_1.TaskManager.listTags();
@@ -401,7 +412,9 @@ function createSubtask() {
             tagNames
         ]);
     });
-    console.log('Tasks:');
+    console.log("\n╔═════════════════════════════════════════════════════╗");
+    console.log("║                     TASKS                           ║");
+    console.log("╚═════════════════════════════════════════════════════╝");
     console.log(taskTable.toString());
     rl.question('Enter the ID or name of the parent task: ', input => {
         const parentTask = tasks.find(task => task.id === Number(input) || task.title === input);

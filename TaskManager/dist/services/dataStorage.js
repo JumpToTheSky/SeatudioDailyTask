@@ -15,6 +15,12 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 var __importStar = (this && this.__importStar) || (function () {
     var ownKeys = function(o) {
         ownKeys = Object.getOwnPropertyNames || function (o) {
@@ -32,60 +38,49 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loadTasksFromFile = loadTasksFromFile;
-exports.saveTasksToFile = saveTasksToFile;
-exports.loadTagsFromFile = loadTagsFromFile;
-exports.saveTagsToFile = saveTagsToFile;
+exports.DataStorage = void 0;
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const tasksFilePath = path.join(__dirname, '..', '..', 'tasks.json');
 const tagsFilePath = path.join(__dirname, '..', '..', 'tag.json');
-function loadTasksFromFile() {
-    try {
-        if (!fs.existsSync(tasksFilePath)) {
-            console.warn(`Warning: Tasks file not found at ${tasksFilePath}. Returning empty array.`);
-            return [];
-        }
-        const data = fs.readFileSync(tasksFilePath, 'utf-8');
-        const plainTasks = JSON.parse(data);
-        return plainTasks;
+function autoSaveLoad(filePath) {
+    return function (target, propertyKey, descriptor) {
+        const originalMethod = descriptor.value;
+        descriptor.value = function (data, callback, ...args) {
+            if (typeof callback !== 'function') {
+                throw new Error(`Callback is not a function in method ${propertyKey}`);
+            }
+            const fileData = fs.existsSync(filePath) ? JSON.parse(fs.readFileSync(filePath, 'utf-8')) : [];
+            const result = originalMethod.apply(this, [fileData, callback, ...args]);
+            fs.writeFileSync(filePath, JSON.stringify(fileData, null, 2), 'utf-8');
+            return result;
+        };
+        return descriptor;
+    };
+}
+class DataStorage {
+    static modifyTasks(data, callback) {
+        return callback(data);
     }
-    catch (error) {
-        console.error("Error loading tasks from file:", error);
-        return [];
+    static modifyTags(data, callback) {
+        return callback(data);
     }
 }
-function saveTasksToFile(tasks) {
-    try {
-        const data = JSON.stringify(tasks, null, 2);
-        fs.writeFileSync(tasksFilePath, data, 'utf-8');
-    }
-    catch (error) {
-        console.error("Error saving tasks to file:", error);
-    }
-}
-function loadTagsFromFile() {
-    try {
-        if (!fs.existsSync(tagsFilePath)) {
-            console.warn(`Warning: Tags file not found at ${tagsFilePath}. Returning empty array.`);
-            return [];
-        }
-        const data = fs.readFileSync(tagsFilePath, 'utf-8');
-        const plainTags = JSON.parse(data);
-        return plainTags;
-    }
-    catch (error) {
-        console.error("Error loading tags from file:", error);
-        return [];
-    }
-}
-function saveTagsToFile(tags) {
-    try {
-        const data = JSON.stringify(tags, null, 2);
-        fs.writeFileSync(tagsFilePath, data, 'utf-8');
-    }
-    catch (error) {
-        console.error("Error saving tags to file:", error);
-    }
-}
+exports.DataStorage = DataStorage;
+__decorate([
+    autoSaveLoad(tasksFilePath),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Array, Function]),
+    __metadata("design:returntype", typeof (_a = typeof T !== "undefined" && T) === "function" ? _a : Object)
+], DataStorage, "modifyTasks", null);
+__decorate([
+    autoSaveLoad(tagsFilePath),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Array, Function]),
+    __metadata("design:returntype", typeof (_b = typeof T !== "undefined" && T) === "function" ? _b : Object)
+], DataStorage, "modifyTags", null);

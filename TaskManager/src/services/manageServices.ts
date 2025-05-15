@@ -24,7 +24,10 @@ export class TaskManager {
             parentId,
             validTagIds
         );
-        DataStorage.modifyTasks([], (tasks) => tasks.push(newTask.toPlainObject()));
+        DataStorage.modifyTasks([], (tasks) => {
+            tasks.push(newTask.toPlainObject());
+            return tasks;
+        });
         return newTask;
     }
 
@@ -70,11 +73,15 @@ export class TaskManager {
     }
 
     static listTasks(): Task[] {
-        return DataStorage.modifyTasks([], (tasks) => tasks.map(Task.fromPlainObject));
+        return DataStorage.modifyTasks([], (tasks) => {
+            return tasks.map(Task.fromPlainObject);
+        });
     }
 
     static listTags(): Tag[] {
-        return DataStorage.modifyTags([], (tags) => tags.map(Tag.fromPlainObject));
+        return DataStorage.modifyTags([], (tags) => {
+            return tags.map(Tag.fromPlainObject);
+        });
     }
 
     static addTag(name: string): Tag {
@@ -82,7 +89,10 @@ export class TaskManager {
             DataStorage.modifyTags([], (tags) => tags.length + 1),
             name
         );
-        DataStorage.modifyTags([], (tags) => tags.push(newTag.toPlainObject()));
+        DataStorage.modifyTags([], (tags) => {
+            tags.push(newTag.toPlainObject());
+            return tags;
+        });
         return newTag;
     }
 

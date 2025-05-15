@@ -4,72 +4,80 @@ exports.TaskManager = void 0;
 const dataStorage_1 = require("./dataStorage");
 const Task_1 = require("../model/Task");
 const Tag_1 = require("../model/Tag");
-const dataStorage_2 = require("./dataStorage");
 class TaskManager {
     static addTask(title, priority = 'medium', description, dueDate, tagIds, parentId) {
-        const tasks = (0, dataStorage_1.loadTasksFromFile)();
-        const tags = (0, dataStorage_2.loadTagsFromFile)();
-        // Validate tag IDs
+        const tags = dataStorage_1.DataStorage.modifyTags([], (tags) => tags); // Load tags
         const validTagIds = (tagIds === null || tagIds === void 0 ? void 0 : tagIds.filter(tagId => tags.some(tag => tag.id === tagId))) || [];
-        const newTask = new Task_1.Task(tasks.length + 1, title, priority, description, dueDate, Task_1.TaskStatus.ToDo, undefined, parentId, validTagIds);
-        tasks.push(newTask.toPlainObject());
-        (0, dataStorage_1.saveTasksToFile)(tasks);
+        const newTask = new Task_1.Task(dataStorage_1.DataStorage.modifyTasks([], (tasks) => tasks.length + 1), title, priority, description, dueDate, Task_1.TaskStatus.ToDo, undefined, parentId, validTagIds);
+        dataStorage_1.DataStorage.modifyTasks([], (tasks) => {
+            tasks.push(newTask.toPlainObject());
+            return tasks;
+        });
         return newTask;
     }
     static updateTask(id, updates) {
-        const tasks = (0, dataStorage_1.loadTasksFromFile)();
-        const taskIndex = tasks.findIndex(task => task.id === id);
-        if (taskIndex === -1)
-            return null;
-        const task = Task_1.Task.fromPlainObject(tasks[taskIndex]);
-        if (updates.title !== undefined)
-            task.title = updates.title;
-        if (updates.description !== undefined)
-            task.description = updates.description;
-        if (updates.priority !== undefined)
-            task.priority = updates.priority;
-        if (updates.status !== undefined)
-            task.updateTaskStatus(updates.status);
-        if (updates.dueDate !== undefined)
-            task.dueDate = updates.dueDate;
-        if (updates.tagIds !== undefined)
-            task.tagIds = updates.tagIds;
-        tasks[taskIndex] = task.toPlainObject();
-        (0, dataStorage_1.saveTasksToFile)(tasks);
-        return task;
+        return dataStorage_1.DataStorage.modifyTasks([], (tasks) => {
+            const taskIndex = tasks.findIndex(task => task.id === id);
+            if (taskIndex === -1)
+                return null;
+            const task = Task_1.Task.fromPlainObject(tasks[taskIndex]);
+            if (updates.title !== undefined)
+                task.title = updates.title;
+            if (updates.description !== undefined)
+                task.description = updates.description;
+            if (updates.priority !== undefined)
+                task.priority = updates.priority;
+            if (updates.status !== undefined)
+                task.updateTaskStatus(updates.status);
+            if (updates.dueDate !== undefined)
+                task.dueDate = updates.dueDate;
+            if (updates.tagIds !== undefined)
+                task.tagIds = updates.tagIds;
+            tasks[taskIndex] = task.toPlainObject();
+            return task;
+        });
     }
     static deleteTask(id) {
-        let tasks = (0, dataStorage_1.loadTasksFromFile)();
-        const initialLength = tasks.length;
-        tasks = tasks.filter(task => task.id !== id);
-        if (tasks.length === initialLength)
+        return dataStorage_1.DataStorage.modifyTasks([], (tasks) => {
+            const initialLength = tasks.length;
+            const filteredTasks = tasks.filter(task => task.id !== id);
+            if (filteredTasks.length !== initialLength) {
+                tasks.length = 0;
+                tasks.push(...filteredTasks);
+                return true;
+            }
             return false;
-        (0, dataStorage_1.saveTasksToFile)(tasks);
-        return true;
+        });
     }
     static listTasks() {
-        const tasks = (0, dataStorage_1.loadTasksFromFile)();
-        return tasks.map(Task_1.Task.fromPlainObject);
+        return dataStorage_1.DataStorage.modifyTasks([], (tasks) => {
+            return tasks.map(Task_1.Task.fromPlainObject);
+        });
     }
     static listTags() {
-        const tags = (0, dataStorage_2.loadTagsFromFile)();
-        return tags.map(Tag_1.Tag.fromPlainObject);
+        return dataStorage_1.DataStorage.modifyTags([], (tags) => {
+            return tags.map(Tag_1.Tag.fromPlainObject);
+        });
     }
     static addTag(name) {
-        const tags = (0, dataStorage_2.loadTagsFromFile)();
-        const newTag = new Tag_1.Tag(tags.length + 1, name);
-        tags.push(newTag.toPlainObject());
-        (0, dataStorage_2.saveTagsToFile)(tags);
+        const newTag = new Tag_1.Tag(dataStorage_1.DataStorage.modifyTags([], (tags) => tags.length + 1), name);
+        dataStorage_1.DataStorage.modifyTags([], (tags) => {
+            tags.push(newTag.toPlainObject());
+            return tags;
+        });
         return newTag;
     }
     static deleteTag(id) {
-        let tags = (0, dataStorage_2.loadTagsFromFile)();
-        const initialLength = tags.length;
-        tags = tags.filter(tag => tag.id !== id);
-        if (tags.length === initialLength)
+        return dataStorage_1.DataStorage.modifyTags([], (tags) => {
+            const initialLength = tags.length;
+            const filteredTags = tags.filter(tag => tag.id !== id);
+            if (filteredTags.length !== initialLength) {
+                tags.length = 0;
+                tags.push(...filteredTags);
+                return true;
+            }
             return false;
-        (0, dataStorage_2.saveTagsToFile)(tags);
-        return true;
+        });
     }
 }
 exports.TaskManager = TaskManager;
