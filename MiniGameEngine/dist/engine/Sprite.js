@@ -22,24 +22,24 @@ export class Sprite {
             this.isLoaded = true;
         }
     }
-    draw(ctx) {
+    draw(context) {
         if (!this.visible)
             return;
         if (this.image && this.isLoaded && this.image.complete && this.image.naturalWidth > 0) {
-            ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+            context.drawImage(this.image, this.x, this.y, this.width, this.height);
         }
         else if (this.color) {
-            ctx.fillStyle = this.color;
-            ctx.fillRect(this.x, this.y, this.width, this.height);
+            context.fillStyle = this.color;
+            context.fillRect(this.x, this.y, this.width, this.height);
         }
     }
     update(deltaTime) {
     }
-    isPointInside(px, py) {
-        return (px >= this.x &&
-            px <= this.x + this.width &&
-            py >= this.y &&
-            py <= this.y + this.height);
+    isPointInside(pointX, pointY) {
+        return (pointX >= this.x &&
+            pointX <= this.x + this.width &&
+            pointY >= this.y &&
+            pointY <= this.y + this.height);
     }
 }
-//# sourceMappingURL=Sprite.js.map
+//# sourceMappingURL=sprite.js.map

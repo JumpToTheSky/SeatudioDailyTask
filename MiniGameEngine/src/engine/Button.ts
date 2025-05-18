@@ -1,10 +1,10 @@
-import { Sprite, SpriteConfig } from './Sprite';
+import { Sprite, type SpriteConfig } from './sprite.js'; 
 
 export interface ButtonConfig extends SpriteConfig {
     text?: string;
     textColor?: string;
     font?: string;
-    onClick?: () => void; 
+    onClick?: () => void;
 }
 
 export class Button extends Sprite {
@@ -14,7 +14,7 @@ export class Button extends Sprite {
     public onClick?: () => void;
 
     constructor(config: ButtonConfig) {
-        super(config); 
+        super(config);
         this.text = config.text;
         this.textColor = config.textColor || 'white';
         this.font = config.font || '16px Arial';
@@ -25,20 +25,19 @@ export class Button extends Sprite {
         }
     }
 
-    public draw(ctx: CanvasRenderingContext2D): void {
+    public override draw(context: CanvasRenderingContext2D): void { 
         if (!this.visible) return;
 
-        super.draw(ctx);
+        super.draw(context); 
 
         if (this.text) {
-            ctx.fillStyle = this.textColor;
-            ctx.font = this.font;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(this.text, this.x + this.width / 2, this.y + this.height / 2);
+            context.fillStyle = this.textColor;
+            context.font = this.font;
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            context.fillText(this.text, this.x + this.width / 2, this.y + this.height / 2);
         }
     }
-
 
     public triggerClick(): void {
         if (this.onClick) {

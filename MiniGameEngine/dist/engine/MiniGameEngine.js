@@ -1,27 +1,27 @@
-import { Button } from './Button';
+import { Button } from './button.js';
 export class MiniGameEngine {
     constructor(canvasId) {
         this.gameObjects = [];
-        this.lastTime = 0;
-        const canvasElement = document.getElementById(canvasId);
-        if (!canvasElement) {
+        this.lastTimestamp = 0;
+        const element = document.getElementById(canvasId);
+        if (!element) {
             throw new Error(`Canvas with id "${canvasId}" not found.`);
         }
-        this.canvas = canvasElement;
-        const context = this.canvas.getContext('2d');
+        this.canvasElement = element;
+        const context = this.canvasElement.getContext('2d');
         if (!context) {
             throw new Error('Failed to get 2D rendering context.');
         }
-        this.ctx = context;
+        this.renderingContext = context;
         this.setupInputHandlers();
     }
     setupInputHandlers() {
-        this.canvas.addEventListener('click', this.handleCanvasClick.bind(this));
+        this.canvasElement.addEventListener('click', this.handleCanvasClick.bind(this));
     }
     handleCanvasClick(event) {
-        const rect = this.canvas.getBoundingClientRect();
-        const clickX = event.clientX - rect.left;
-        const clickY = event.clientY - rect.top;
+        const canvasRect = this.canvasElement.getBoundingClientRect();
+        const clickX = event.clientX - canvasRect.left;
+        const clickY = event.clientY - canvasRect.top;
         for (let i = this.gameObjects.length - 1; i >= 0; i--) {
             const obj = this.gameObjects[i];
             if (obj instanceof Button && obj.visible && obj.isPointInside(clickX, clickY)) {
@@ -30,10 +30,10 @@ export class MiniGameEngine {
             }
         }
     }
-    add(gameObject) {
+    addGameObject(gameObject) {
         this.gameObjects.push(gameObject);
     }
-    remove(gameObject) {
+    removeGameObject(gameObject) {
         this.gameObjects = this.gameObjects.filter(obj => obj !== gameObject);
     }
     start() {
@@ -41,8 +41,8 @@ export class MiniGameEngine {
             console.warn("Engine already started.");
             return;
         }
-        this.lastTime = performance.now();
-        this.gameLoop(this.lastTime);
+        this.lastTimestamp = performance.now();
+        this.runGameLoop(this.lastTimestamp);
         console.log("MiniGameEngine started.");
     }
     stop() {
@@ -52,36 +52,36 @@ export class MiniGameEngine {
             console.log("MiniGameEngine stopped.");
         }
     }
-    gameLoop(currentTime) {
-        const deltaTime = (currentTime - this.lastTime) / 1000;
-        this.lastTime = currentTime;
-        this.update(deltaTime);
-        this.render();
-        this.animationFrameId = requestAnimationFrame(this.gameLoop.bind(this));
+    runGameLoop(currentTime) {
+        const deltaTime = (currentTime - this.lastTimestamp) / 1000;
+        this.lastTimestamp = currentTime;
+        this.updateGameObjects(deltaTime);
+        this.renderGameObjects();
+        this.animationFrameId = requestAnimationFrame(this.runGameLoop.bind(this));
     }
-    update(deltaTime) {
-        const allLoaded = this.gameObjects.every(obj => obj.isLoaded);
-        if (!allLoaded) {
+    updateGameObjects(deltaTime) {
+        const allAssetsLoaded = this.gameObjects.every(obj => obj.isLoaded);
+        if (!allAssetsLoaded) {
             return;
         }
         for (const obj of this.gameObjects) {
             obj.update(deltaTime);
         }
     }
-    render() {
-        const allLoaded = this.gameObjects.every(obj => obj.isLoaded);
-        if (!allLoaded)
+    renderGameObjects() {
+        const allAssetsLoaded = this.gameObjects.every(obj => obj.isLoaded);
+        if (!allAssetsLoaded)
             return;
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.renderingContext.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
         for (const obj of this.gameObjects) {
-            obj.draw(this.ctx);
+            obj.draw(this.renderingContext);
         }
     }
-    getCanvas() {
-        return this.canvas;
+    getCanvasElement() {
+        return this.canvasElement;
     }
-    getContext() {
-        return this.ctx;
+    getRenderingContext() {
+        return this.renderingContext;
     }
 }
-//# sourceMappingURL=MiniGameEngine.js.map
+//# sourceMappingURL=miniGameEngine.js.map

@@ -1,4 +1,4 @@
-import { Sprite, SpriteConfig } from './Sprite';
+import { Sprite, type SpriteConfig } from './sprite.js';
 export interface ButtonConfig extends SpriteConfig {
     text?: string;
     textColor?: string;
@@ -11,6 +11,6 @@ export declare class Button extends Sprite {
     font: string;
     onClick?: () => void;
     constructor(config: ButtonConfig);
-    draw(ctx: CanvasRenderingContext2D): void;
+    draw(context: CanvasRenderingContext2D): void;
     triggerClick(): void;
 }
