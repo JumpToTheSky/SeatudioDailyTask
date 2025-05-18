@@ -1,4 +1,4 @@
-import { Sprite } from './Sprite';
+import { Sprite } from './sprite.js';
 export class Button extends Sprite {
     constructor(config) {
         super(config);
@@ -10,16 +10,16 @@ export class Button extends Sprite {
             this.color = 'blue';
         }
     }
-    draw(ctx) {
+    draw(context) {
         if (!this.visible)
             return;
-        super.draw(ctx);
+        super.draw(context);
         if (this.text) {
-            ctx.fillStyle = this.textColor;
-            ctx.font = this.font;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(this.text, this.x + this.width / 2, this.y + this.height / 2);
+            context.fillStyle = this.textColor;
+            context.font = this.font;
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            context.fillText(this.text, this.x + this.width / 2, this.y + this.height / 2);
         }
     }
     triggerClick() {
@@ -28,4 +28,4 @@ export class Button extends Sprite {
         }
     }
 }
-//# sourceMappingURL=Button.js.map
+//# sourceMappingURL=button.js.map

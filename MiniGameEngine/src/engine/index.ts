@@ -1,3 +1,3 @@
-export { MiniGameEngine } from './MiniGameEngine';
-export { Sprite, SpriteConfig } from './Sprite';
-export { Button, ButtonConfig } from './Button';
+export { MiniGameEngine } from './miniGameEngine.js';
+export { Sprite, SpriteConfig } from './sprite.js';
+export { Button, ButtonConfig } from './button.js';

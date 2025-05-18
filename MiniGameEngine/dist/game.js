@@ -1,6 +1,6 @@
-import { MiniGameEngine, Sprite, Button } from './engine/index';
-const engine = new MiniGameEngine('gameCanvas');
-const canvas = engine.getCanvas();
+import { MiniGameEngine, Sprite, Button } from './engine/index.js';
+const gameEngine = new MiniGameEngine('gameCanvas');
+const canvasElement = gameEngine.getCanvasElement();
 const redSquare = new Sprite({
     x: 50,
     y: 50,
@@ -8,7 +8,7 @@ const redSquare = new Sprite({
     height: 100,
     color: 'red'
 });
-engine.add(redSquare);
+gameEngine.addGameObject(redSquare);
 const playerSprite = new Sprite({
     x: 200,
     y: 150,
@@ -16,11 +16,11 @@ const playerSprite = new Sprite({
     height: 64,
     imageSrc: 'https://via.placeholder.com/64/0000FF/FFFFFF?Text=Player'
 });
-engine.add(playerSprite);
-let score = 0;
+gameEngine.addGameObject(playerSprite);
+let currentScore = 0;
 const myButton = new Button({
-    x: canvas.width / 2 - 75,
-    y: canvas.height - 100,
+    x: canvasElement.width / 2 - 75,
+    y: canvasElement.height - 100,
     width: 150,
     height: 50,
     text: 'Click Me!',
@@ -28,20 +28,20 @@ const myButton = new Button({
     textColor: 'white',
     font: '20px Arial',
     onClick: () => {
-        score++;
-        console.log('Button clicked! Score:', score);
+        currentScore++;
+        console.log('Button clicked! Score:', currentScore);
         redSquare.x += 10;
-        if (redSquare.x > canvas.width) {
+        if (redSquare.x > canvasElement.width) {
             redSquare.x = -redSquare.width;
         }
-        myButton.text = `Score: ${score}`;
+        myButton.text = `Score: ${currentScore}`;
     }
 });
-engine.add(myButton);
-let playerSpeed = 100;
+gameEngine.addGameObject(myButton);
+let playerMovementSpeed = 100;
 playerSprite.update = (deltaTime) => {
-    playerSprite.x += playerSpeed * deltaTime;
-    if (playerSprite.x > canvas.width) {
+    playerSprite.x += playerMovementSpeed * deltaTime;
+    if (playerSprite.x > canvasElement.width) {
         playerSprite.x = -playerSprite.width;
     }
 };
@@ -52,6 +52,6 @@ const blueCircle = new Sprite({
     height: 50,
     color: 'blue'
 });
-engine.add(blueCircle);
-engine.start();
+gameEngine.addGameObject(blueCircle);
+gameEngine.start();
 //# sourceMappingURL=game.js.map

@@ -1,23 +1,23 @@
-import { Sprite } from './Sprite';
-import { Button } from './Button';
+import { Sprite } from './sprite.js';
+import { Button } from './button.js';
 type GameObject = Sprite | Button;
 export declare class MiniGameEngine {
-    private canvas;
-    private ctx;
+    private canvasElement;
+    private renderingContext;
     private gameObjects;
-    private lastTime;
+    private lastTimestamp;
     private animationFrameId?;
     constructor(canvasId: string);
     private setupInputHandlers;
     private handleCanvasClick;
-    add(gameObject: GameObject): void;
-    remove(gameObject: GameObject): void;
+    addGameObject(gameObject: GameObject): void;
+    removeGameObject(gameObject: GameObject): void;
     start(): void;
     stop(): void;
-    private gameLoop;
-    private update;
-    private render;
-    getCanvas(): HTMLCanvasElement;
-    getContext(): CanvasRenderingContext2D;
+    private runGameLoop;
+    private updateGameObjects;
+    private renderGameObjects;
+    getCanvasElement(): HTMLCanvasElement;
+    getRenderingContext(): CanvasRenderingContext2D;
 }
 export {};

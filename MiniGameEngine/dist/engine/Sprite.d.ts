@@ -17,7 +17,7 @@ export declare class Sprite {
     visible: boolean;
     isLoaded: boolean;
     constructor(config: SpriteConfig);
-    draw(ctx: CanvasRenderingContext2D): void;
+    draw(context: CanvasRenderingContext2D): void;
     update(deltaTime: number): void;
-    isPointInside(px: number, py: number): boolean;
+    isPointInside(pointX: number, pointY: number): boolean;
 }
