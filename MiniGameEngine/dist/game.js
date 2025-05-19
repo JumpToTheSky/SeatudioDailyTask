@@ -14,7 +14,7 @@ const playerSprite = new Sprite({
     y: 150,
     width: 64,
     height: 64,
-    imageSrc: 'https://via.placeholder.com/64/0000FF/FFFFFF?Text=Player'
+    imageSrc: './pacman.png'
 });
 gameEngine.addGameObject(playerSprite);
 let currentScore = 0;
@@ -45,13 +45,13 @@ playerSprite.update = (deltaTime) => {
         playerSprite.x = -playerSprite.width;
     }
 };
-const blueCircle = new Sprite({
-    x: 70,
-    y: 70,
-    width: 50,
-    height: 50,
-    color: 'blue'
-});
-gameEngine.addGameObject(blueCircle);
+// const blueCircle = new Sprite({
+//     x: 70,
+//     y: 70,
+//     width: 50,
+//     height: 50,
+//     color: 'blue'
+// });
+// gameEngine.addGameObject(blueCircle); 
 gameEngine.start();
 //# sourceMappingURL=game.js.map

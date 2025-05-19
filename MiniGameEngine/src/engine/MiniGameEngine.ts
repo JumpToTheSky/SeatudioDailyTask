@@ -72,6 +72,7 @@ export class MiniGameEngine {
 
     private runGameLoop(currentTime: number): void { 
         const deltaTime = (currentTime - this.lastTimestamp) / 1000;
+        //khong can doi sang s!
         this.lastTimestamp = currentTime;
 
         this.updateGameObjects(deltaTime); 
