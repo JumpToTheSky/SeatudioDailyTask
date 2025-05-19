@@ -38,7 +38,7 @@ const myButton = new Button({
     }
 });
 gameEngine.addGameObject(myButton);
-let playerMovementSpeed = 100;
+let playerMovementSpeed = 0.1;
 playerSprite.update = (deltaTime) => {
     playerSprite.x += playerMovementSpeed * deltaTime;
     if (playerSprite.x > canvasElement.width) {
